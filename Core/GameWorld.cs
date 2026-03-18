@@ -27,6 +27,9 @@ public class GameWorld : DrawableGameComponent
     private const int PIPE_GAP_HEIGHT = 400;
     private const int PIPE_WIDTH = 200;
 
+    // Fixed world height (constant gameplay space). Wider screens show more world horizontally.
+    private const float WORLD_HEIGHT = 1080f;
+
     // Ground texture is a square, so this is both the width and height of a single tile.
     private const int GROUND_TILE_SIZE = 100;
 
@@ -36,6 +39,7 @@ public class GameWorld : DrawableGameComponent
     private SpriteBatch _spriteBatch;
 
     private Rectangle _bounds;
+    private Matrix _cameraMatrix;
 
     private float _pipeSpawnTimer = 0f;
     private float _groundScrollOffset = 0f;
@@ -99,7 +103,14 @@ public class GameWorld : DrawableGameComponent
 
     public override void Draw(GameTime gameTime)
     {
-        _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap);
+        _spriteBatch.Begin(
+            SpriteSortMode.Deferred,
+            BlendState.AlphaBlend,
+            SamplerState.LinearWrap,
+            null,
+            null,
+            null,
+            _cameraMatrix);
 
         foreach (var pipe in _pipes)
         {
@@ -144,10 +155,19 @@ public class GameWorld : DrawableGameComponent
 
     private void CalculateBounds(GraphicsDevice graphicsDevice)
     {
-        _bounds = graphicsDevice.Viewport.Bounds;
+        float screenWidth = graphicsDevice.Viewport.Width;
+        float screenHeight = graphicsDevice.Viewport.Height;
+
+        // Keep the vertical world size constant and expand horizontally based on aspect.
+        float worldWidth = WORLD_HEIGHT * (screenWidth / screenHeight);
+        _bounds = new Rectangle(0, 0, (int)MathF.Ceiling(worldWidth), (int)WORLD_HEIGHT);
 
         int groundY = _bounds.Height - GROUND_TILE_SIZE;
         _groundBounds = new Rectangle(0, groundY, _bounds.Width, GROUND_TILE_SIZE);
+
+        // For SpriteBatch, use a scale matrix to map world units to screen pixels.
+        float scale = screenHeight / WORLD_HEIGHT;
+        _cameraMatrix = Matrix.CreateScale(scale, scale, 1f);
     }
 
     private void UpdateGround(GameTime gameTime)
