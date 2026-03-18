@@ -23,14 +23,17 @@ public class GameWorld : DrawableGameComponent
 
 
     private const float PIPE_SPAWN_INTERVAL = 1f;
-    private const int PIPE_OPENING_VARIANCE = 700;
+    private const int PIPE_GAP_VARIANCE = 700; // Variance in the gap between top and bottom pipes
     private const int PIPE_GAP_HEIGHT = 400;
     private const int PIPE_WIDTH = 200;
 
-    private const int GROUND_HEIGHT = 100;
+    // Ground texture is a square, so this is both the width and height of a single tile.
+    private const int GROUND_TILE_SIZE = 100;
 
     private const float LEVEL_SPEED = 800.0f;
 
+
+    private SpriteBatch _spriteBatch;
 
     private Rectangle _bounds;
 
@@ -46,6 +49,10 @@ public class GameWorld : DrawableGameComponent
 
     private Bird _bird;
 
+    private bool _isGameOver = false;
+
+    private Random _random = new Random(1234);
+
     KeyboardState _previousKeyboardState = Keyboard.GetState();
     MouseState _previousMouseState = Mouse.GetState();
     GamePadState _previousGamePadState = GamePad.GetState(PlayerIndex.One);
@@ -57,25 +64,33 @@ public class GameWorld : DrawableGameComponent
     {
         _pipeSpawnTimer = 0f;
 
-        _bounds = game.GraphicsDevice.Viewport.Bounds;
+        CalculateBounds(game.GraphicsDevice);
 
         _bird = new Bird(game);
 
         _debugRenderer = new DebugRenderer(128, 256, game.GraphicsDevice);
+    }
 
-        _groundBounds = BuildGroundBounds();
+    public void OnGraphicsDeviceReset(GraphicsDevice graphicsDevice)
+    {
+        CalculateBounds(graphicsDevice);
     }
 
     public override void Update(GameTime gameTime)
     {
-        UpdateInput();
+        if (!_isGameOver)
+        {
+            UpdateInput();
+        }
+
         UpdatePipes(gameTime);
         UpdateGround(gameTime);
 
         _bird.Update(gameTime);
 
-        if (CheckBirdCollision())
+        if (!_isGameOver && CheckBirdCollision())
         {
+            _isGameOver = true;
             OnPlayerDeath?.Invoke();
         }
 
@@ -84,20 +99,18 @@ public class GameWorld : DrawableGameComponent
 
     public override void Draw(GameTime gameTime)
     {
-        var spriteBatch = Game.Services.GetService<SpriteBatch>();
-
-        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap);
+        _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap);
 
         foreach (var pipe in _pipes)
         {
-            DrawPipe(spriteBatch, pipe);
+            DrawPipe(_spriteBatch, pipe);
         }
 
-        DrawGround(spriteBatch);
+        DrawGround(_spriteBatch);
 
-        _bird.Draw(spriteBatch);
+        _bird.Draw(_spriteBatch);
 
-        spriteBatch.End();
+        _spriteBatch.End();
 
 #if DEBUG
         _debugRenderer.Begin();
@@ -113,6 +126,8 @@ public class GameWorld : DrawableGameComponent
 
     protected override void LoadContent()
     {
+        _spriteBatch = new SpriteBatch(GraphicsDevice);
+
         var content = Game.Services.GetService<ContentManager>();
         _pipeSprite = new SlicedSprite(
             content.Load<Texture2D>("GreenPipe"),
@@ -127,12 +142,20 @@ public class GameWorld : DrawableGameComponent
     }
 
 
+    private void CalculateBounds(GraphicsDevice graphicsDevice)
+    {
+        _bounds = graphicsDevice.Viewport.Bounds;
+
+        int groundY = _bounds.Height - GROUND_TILE_SIZE;
+        _groundBounds = new Rectangle(0, groundY, _bounds.Width, GROUND_TILE_SIZE);
+    }
+
     private void UpdateGround(GameTime gameTime)
     {
         _groundScrollOffset += LEVEL_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds;
-        while (_groundScrollOffset >= GROUND_HEIGHT)
+        while (_groundScrollOffset >= GROUND_TILE_SIZE)
         {
-            _groundScrollOffset -= GROUND_HEIGHT;
+            _groundScrollOffset -= GROUND_TILE_SIZE;
         }
     }
 
@@ -188,12 +211,10 @@ public class GameWorld : DrawableGameComponent
         int pipeX = (int)(pipe.Position - (PIPE_WIDTH / 2));
 
         int topPipeHeight = gapCenter - (PIPE_GAP_HEIGHT / 2);
-        Point size = new Point(PIPE_WIDTH, topPipeHeight);
         Rectangle dest = new Rectangle(pipeX, 0, PIPE_WIDTH, topPipeHeight);
         pipe.TopPipe = dest;
 
         int bottomPipeHeight = screenHeight - (gapCenter + (PIPE_GAP_HEIGHT / 2));
-        size.Y = bottomPipeHeight;
         dest.Y = screenHeight - bottomPipeHeight;
         dest.Height = bottomPipeHeight;
         pipe.BottomPipe = dest;
@@ -204,7 +225,7 @@ public class GameWorld : DrawableGameComponent
         Pipe pipe = new Pipe()
         {
             Position = _bounds.Width + (PIPE_WIDTH / 2),
-            Height = (_bounds.Height / 2) - (PIPE_OPENING_VARIANCE / 2) + (int)(new Random().NextDouble() * PIPE_OPENING_VARIANCE)
+            Height = (_bounds.Height / 2) - (PIPE_GAP_VARIANCE / 2) + (int)(_random.NextDouble() * PIPE_GAP_VARIANCE)
         };
         _pipes.Add(pipe);
     }
@@ -219,19 +240,12 @@ public class GameWorld : DrawableGameComponent
     {
         Rectangle destRect = _groundBounds;
 
-        float numRepeats = (float)_bounds.Width / GROUND_HEIGHT;
-        int sampleX = (int)(_groundScrollOffset / GROUND_HEIGHT * _groundTexture.Width);
+        float numRepeats = (float)_bounds.Width / GROUND_TILE_SIZE;
+        int sampleX = (int)(_groundScrollOffset / GROUND_TILE_SIZE * _groundTexture.Width);
         int sampleWidth = (int)(_groundTexture.Width * numRepeats);
         Rectangle sourceRect = new Rectangle(sampleX, 0, sampleWidth, _groundTexture.Height);
 
         spriteBatch.Draw(_groundTexture, destRect, sourceRect, Color.White);
-    }
-
-    private Rectangle BuildGroundBounds()
-    {
-        int groundY = _bounds.Height - GROUND_HEIGHT;
-        Rectangle destRect = new Rectangle(0, groundY, _bounds.Width, GROUND_HEIGHT);
-        return destRect;
     }
 
     private bool CheckBirdCollision()
@@ -240,6 +254,8 @@ public class GameWorld : DrawableGameComponent
 
         if (_pipes.Count > 0)
         {
+            // Only check collision with the first pipe, since pipes are spaced out enough that
+            // the bird can't collide with more than one at a time
             Pipe pipe = _pipes[0];
 
             // Check collision with top pipe
