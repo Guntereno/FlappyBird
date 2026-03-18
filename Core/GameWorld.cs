@@ -38,6 +38,8 @@ public class GameWorld : DrawableGameComponent
 
     private SpriteBatch _spriteBatch;
 
+    private InputManager _inputManager;
+
     private Rectangle _bounds;
     private Matrix _cameraMatrix;
 
@@ -53,13 +55,10 @@ public class GameWorld : DrawableGameComponent
 
     private Bird _bird;
 
+    private bool _isPaused = false;
     private bool _isGameOver = false;
 
     private Random _random = new Random(1234);
-
-    KeyboardState _previousKeyboardState = Keyboard.GetState();
-    MouseState _previousMouseState = Mouse.GetState();
-    GamePadState _previousGamePadState = GamePad.GetState(PlayerIndex.One);
 
     private DebugRenderer _debugRenderer;
 
@@ -73,6 +72,10 @@ public class GameWorld : DrawableGameComponent
         _bird = new Bird(game);
 
         _debugRenderer = new DebugRenderer(128, 256, game.GraphicsDevice);
+
+        _inputManager = new InputManager();
+        _inputManager.Mapper.AddMapping("Jump", new InputKey(Keys.Space), new InputKey(true), new InputKey(Buttons.A));
+        _inputManager.Mapper.AddMapping("Pause", new InputKey(Keys.P), new InputKey(Keys.Escape));
     }
 
     public void OnGraphicsDeviceReset(GraphicsDevice graphicsDevice)
@@ -82,20 +85,19 @@ public class GameWorld : DrawableGameComponent
 
     public override void Update(GameTime gameTime)
     {
-        if (!_isGameOver)
+        UpdateInput(); // Always check input (for pause handling)
+
+        if (!_isPaused && !_isGameOver)
         {
-            UpdateInput();
-        }
+            UpdatePipes(gameTime);
+            UpdateGround(gameTime);
+            _bird.Update(gameTime);
 
-        UpdatePipes(gameTime);
-        UpdateGround(gameTime);
-
-        _bird.Update(gameTime);
-
-        if (!_isGameOver && CheckBirdCollision())
-        {
-            _isGameOver = true;
-            OnPlayerDeath?.Invoke();
+            if (CheckBirdCollision())
+            {
+                _isGameOver = true;
+                OnPlayerDeath?.Invoke();
+            }
         }
 
         base.Update(gameTime);
@@ -204,22 +206,25 @@ public class GameWorld : DrawableGameComponent
         }
     }
 
+
     private void UpdateInput()
     {
-        KeyboardState keyboardState = Keyboard.GetState();
-        MouseState mouseState = Mouse.GetState();
-        GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
+        _inputManager.Update();
 
-        if ((keyboardState.IsKeyDown(Keys.Space) && !_previousKeyboardState.IsKeyDown(Keys.Space)) ||
-            (mouseState.LeftButton == ButtonState.Pressed && _previousMouseState.LeftButton == ButtonState.Released) ||
-            (gamePadState.Buttons.A == ButtonState.Pressed && _previousGamePadState.Buttons.A == ButtonState.Released))
+        // Handle pause (always checkable)
+        if (_inputManager.IsActionJustPressed("Pause"))
         {
-            _bird.Jump();
+            _isPaused = !_isPaused;
         }
 
-        _previousKeyboardState = keyboardState;
-        _previousMouseState = mouseState;
-        _previousGamePadState = gamePadState;
+        // Handle other inputs only if not paused
+        if (!_isPaused)
+        {
+            if (_inputManager.IsActionJustPressed("Jump"))
+            {
+                _bird.Jump();
+            }
+        }
     }
 
 
