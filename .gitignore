@@ -76,5 +76,4 @@ dist/
 publish/
 
 # Editor settings
-.vscode/
 .idea/
