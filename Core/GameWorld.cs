@@ -35,6 +35,9 @@ public class GameWorld : DrawableGameComponent
 
     private const float LEVEL_SPEED = 800.0f;
 
+    private static readonly FName ACTION_JUMP = new FName("Jump");
+    private static readonly FName ACTION_PAUSE = new FName("Pause");
+
 
     private SpriteBatch _spriteBatch;
 
@@ -74,8 +77,8 @@ public class GameWorld : DrawableGameComponent
         _debugRenderer = new DebugRenderer(128, 256, game.GraphicsDevice);
 
         _inputManager = new InputManager();
-        _inputManager.Mapper.AddMapping("Jump", new InputKey(Keys.Space), new InputKey(true), new InputKey(Buttons.A));
-        _inputManager.Mapper.AddMapping("Pause", new InputKey(Keys.P), new InputKey(Keys.Escape));
+        _inputManager.Mapper.AddMapping(ACTION_JUMP, new InputKey(Keys.Space), new InputKey(true), new InputKey(Buttons.A));
+        _inputManager.Mapper.AddMapping(ACTION_PAUSE, new InputKey(Keys.P), new InputKey(Keys.Escape));
     }
 
     public void OnGraphicsDeviceReset(GraphicsDevice graphicsDevice)
@@ -212,7 +215,7 @@ public class GameWorld : DrawableGameComponent
         _inputManager.Update();
 
         // Handle pause (always checkable)
-        if (_inputManager.IsActionJustPressed("Pause"))
+        if (_inputManager.IsActionJustPressed(ACTION_PAUSE))
         {
             _isPaused = !_isPaused;
         }
@@ -220,7 +223,7 @@ public class GameWorld : DrawableGameComponent
         // Handle other inputs only if not paused
         if (!_isPaused)
         {
-            if (_inputManager.IsActionJustPressed("Jump"))
+            if (_inputManager.IsActionJustPressed(ACTION_JUMP))
             {
                 _bird.Jump();
             }

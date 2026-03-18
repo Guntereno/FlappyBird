@@ -70,7 +70,7 @@ public class Bird
 
         _spriteBounds = new Rectangle(
                 (int)_position.X - BIRD_WIDTH / 2,
-                (int)_position.Y -BIRD_HEIGHT / 2,
+                (int)_position.Y - BIRD_HEIGHT / 2,
                 BIRD_WIDTH,
                 BIRD_HEIGHT
             );
@@ -94,4 +94,3 @@ public class Bird
         _animatedSprite.Draw(spriteBatch, _spriteBounds);
     }
 }
-  

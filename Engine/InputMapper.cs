@@ -6,21 +6,21 @@ namespace FlappyBird.Engine;
 
 public class InputMapper
 {
-    private readonly Dictionary<string, List<InputKey>> _mappings = new();
+    private readonly Dictionary<FName, List<InputKey>> _mappings = new();
 
-    public void AddMapping(string action, params InputKey[] keys)
+    public void AddMapping(FName action, params InputKey[] keys)
     {
         _mappings[action] = new List<InputKey>(keys);
     }
 
-    public bool IsActionPressed(string action, KeyboardState keyboard, MouseState mouse, GamePadState gamePad)
+    public bool IsActionPressed(FName action, KeyboardState keyboard, MouseState mouse, GamePadState gamePad)
     {
         if (!_mappings.TryGetValue(action, out var keys))
             return false;
         return keys.Any(key => key.IsPressed(keyboard, mouse, gamePad));
     }
 
-    public bool IsActionJustPressed(string action, KeyboardState keyboard, MouseState mouse, GamePadState gamePad,
+    public bool IsActionJustPressed(FName action, KeyboardState keyboard, MouseState mouse, GamePadState gamePad,
                                     KeyboardState prevKeyboard, MouseState prevMouse, GamePadState prevGamePad)
     {
         if (!_mappings.TryGetValue(action, out var keys))

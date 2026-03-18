@@ -19,13 +19,19 @@ public class FlappyBirdGame : Game
 
         IsMouseVisible = true;
 
-        int screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+#if DEBUG
+        int screenWidth = 768;
+        int screenHeight = 1024;
+        Window.AllowUserResizing = true;
+#else
         int screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+        int screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+        _graphics.IsFullScreen = true;
+#endif
+
         _graphics.PreferredBackBufferWidth = screenWidth;
         _graphics.PreferredBackBufferHeight = screenHeight;
 
-        //_graphics.IsFullScreen = true;
-        Window.AllowUserResizing = true;
         _graphics.SynchronizeWithVerticalRetrace = true;
 
         _graphics.ApplyChanges();
@@ -56,11 +62,6 @@ public class FlappyBirdGame : Game
         _levelManager.OnPlayerDeath += RestartGame;
     }
 
-
-    protected override void LoadContent()
-    {
-    }
-
     protected override void Update(GameTime gameTime)
     {
         GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
@@ -69,7 +70,7 @@ public class FlappyBirdGame : Game
         if (gamePadState.Buttons.Back == ButtonState.Pressed || keyboardState.IsKeyDown(Keys.Escape))
             Exit();
 
-       base.Update(gameTime);
+        base.Update(gameTime);
     }
 
 

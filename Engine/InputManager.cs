@@ -31,12 +31,12 @@ public class InputManager
         _currentGamePad = GamePad.GetState(PlayerIndex.One);
     }
 
-    public bool IsActionPressed(string action)
+    public bool IsActionPressed(FName action)
     {
         return _mapper.IsActionPressed(action, _currentKeyboard, _currentMouse, _currentGamePad);
     }
 
-    public bool IsActionJustPressed(string action)
+    public bool IsActionJustPressed(FName action)
     {
         return _mapper.IsActionJustPressed(action, _currentKeyboard, _currentMouse, _currentGamePad,
                                            _previousKeyboard, _previousMouse, _previousGamePad);

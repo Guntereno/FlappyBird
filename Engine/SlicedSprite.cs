@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace FlappyBird;
+namespace FlappyBird.Engine;
 
 public class SlicedSprite
 {
