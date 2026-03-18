@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/FlappyBird.csproj"
+                "${workspaceFolder}/FlappyBird.Windows/FlappyBird.Windows.csproj"
             ],
             "problemMatcher": "$msCompile"
         },
@@ -17,7 +17,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/FlappyBird.csproj",
+                "${workspaceFolder}/FlappyBird.Windows/FlappyBird.Windows.csproj",
                 "--configuration",
                 "Release"
             ],

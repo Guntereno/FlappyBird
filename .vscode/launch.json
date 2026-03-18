@@ -5,22 +5,22 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "FlappyBird Debug",
+      "name": "FlappyBird.Windows|Debug",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "buildFlappyBirdDebug",
-      "program": "${workspaceFolder}/bin/Debug/net9.0/FlappyBird.dll",
+      "program": "${workspaceFolder}/FlappyBird.Windows/bin/Debug/net9.0/FlappyBird.Windows.dll",
       "args": [],
       "cwd": "${workspaceFolder}",
       "console": "internalConsole",
       "stopAtEntry": false
     },
     {
-      "name": "FlappyBird Release",
+      "name": "FlappyBird.Windows|Release",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "buildFlappyBirdRelease",
-      "program": "${workspaceFolder}/bin/Release/net9.0/FlappyBird.dll",
+      "program": "${workspaceFolder}/FlappyBird.Windows/bin/Release/net9.0/FlappyBird.Windows.dll",
       "args": [],
       "cwd": "${workspaceFolder}",
       "console": "internalConsole",
