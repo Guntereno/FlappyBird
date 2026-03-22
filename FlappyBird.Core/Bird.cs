@@ -27,8 +27,8 @@ public class Bird
     private const int BIRD_HEIGHT = 172;
 
 
-    // Visual properties (using placeholder colors for now)
-    private Texture2D _birdTexture;
+    // Visual properties
+    private Texture2D _birdTexture = null;
     private AnimatedSprite _animatedSprite;
 
     private Rectangle _collisionBox;
@@ -39,7 +39,7 @@ public class Bird
     // Constructor
     public Bird(Game game)
     {
-        _position = new Vector2(200, 300);
+        _position = new Vector2(300, 300);
         _velocity = Vector2.Zero;
 
         _collisionBox = new Rectangle(44, 20, 147, 123); // Adjusted to fit the bird's body shape better

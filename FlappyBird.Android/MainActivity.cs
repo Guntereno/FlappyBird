@@ -14,7 +14,7 @@ namespace xyz.flappybird.android
         Icon = "@drawable/icon",
         AlwaysRetainTaskState = true,
         LaunchMode = LaunchMode.SingleInstance,
-        ScreenOrientation = ScreenOrientation.FullUser,
+        ScreenOrientation = ScreenOrientation.Landscape,
         ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden | ConfigChanges.ScreenSize
     )]
     public class MainActivity : AndroidGameActivity
@@ -26,11 +26,42 @@ namespace xyz.flappybird.android
         {
             base.OnCreate(bundle);
 
-            _game = new FlappyBirdGame();
+            HideSystemUI();
+
+            _game = new FlappyBirdGame(Platform.Android);
             _view = _game.Services.GetService(typeof(View)) as View;
 
             SetContentView(_view);
             _game.Run();
+
+            SetContentView((View)_game.Services.GetService(typeof(View)));
+        }
+
+        public override void OnWindowFocusChanged(bool hasFocus)
+        {
+            base.OnWindowFocusChanged(hasFocus);
+            if (hasFocus)
+                HideSystemUI();
+        }
+
+
+        private void HideSystemUI()
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+            {
+                View decorView = Window.DecorView;
+                var uiOptions = (int)decorView.SystemUiVisibility;
+                var newUiOptions = (int)uiOptions;
+
+                newUiOptions |= (int)SystemUiFlags.LowProfile;
+                newUiOptions |= (int)SystemUiFlags.Fullscreen;
+                newUiOptions |= (int)SystemUiFlags.HideNavigation;
+                newUiOptions |= (int)SystemUiFlags.ImmersiveSticky;
+
+                decorView.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
+
+                this.Immersive = true;
+            }
         }
     }
 }

@@ -5,13 +5,19 @@ using Microsoft.Xna.Framework.Input;
 
 namespace FlappyBird.Core;
 
+public enum Platform
+{
+    Android,
+    Desktop
+}
+
 public class FlappyBirdGame : Game
 {
-    private GraphicsDeviceManager _graphics;
+    private GraphicsDeviceManager _graphics = null;
 
-    private GameWorld _levelManager;
+    private GameWorld _levelManager = null;
 
-    public FlappyBirdGame()
+    public FlappyBirdGame(Platform platform)
     {
         _graphics = new GraphicsDeviceManager(this);
 
@@ -19,15 +25,28 @@ public class FlappyBirdGame : Game
 
         IsMouseVisible = true;
 
+        bool windowed = false;
+
 #if DEBUG
-        int screenWidth = 768;
-        int screenHeight = 1024;
-        Window.AllowUserResizing = true;
-#else
-        int screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-        int screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-        _graphics.IsFullScreen = true;
+        if (platform == Platform.Desktop)
+            windowed = true;
 #endif
+
+        int screenWidth, screenHeight;
+
+        if(windowed)
+        {
+            screenWidth = 1024;
+            screenHeight = 768;
+            Window.AllowUserResizing = true;
+        }
+        else
+        {
+            screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            _graphics.IsFullScreen = true;
+        }
+
 
         _graphics.PreferredBackBufferWidth = screenWidth;
         _graphics.PreferredBackBufferHeight = screenHeight;
