@@ -2,6 +2,17 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Clean Intermediates",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-Command",
+                "Get-ChildItem -Recurse -Directory | Where-Object { $_.Name -in @(''bin'',''obj'') } | Remove-Item -Recurse -Force; dotnet clean"
+            ],
+            "problemMatcher": []
+        },
+        {
             "label": "buildFlappyBirdDebug",
             "command": "dotnet",
             "type": "process",

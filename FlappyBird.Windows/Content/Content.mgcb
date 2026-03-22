@@ -13,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin FlappingBird.tiff
+#begin ../../Content/FlappingBird.tiff
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -23,9 +23,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:FlappingBird.tiff
+/build:../../Content/FlappingBird.tiff;FlappingBird.tiff
 
-#begin GreenPipe.tiff
+#begin ../../Content/GreenPipe.tiff
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -35,9 +35,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:GreenPipe.tiff
+/build:../../Content/GreenPipe.tiff;GreenPipe.tiff
 
-#begin Ground.tiff
+#begin ../../Content/Ground.tiff
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -47,5 +47,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Ground.tiff
+/build:../../Content/Ground.tiff;Ground.tiff
 
