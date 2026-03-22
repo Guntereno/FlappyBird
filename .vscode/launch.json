@@ -8,7 +8,7 @@
       "name": "FlappyBird.Windows|Debug",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "buildFlappyBirdDebug",
+      "preLaunchTask": "Build Windows|Debug",
       "program": "${workspaceFolder}/FlappyBird.Windows/bin/Debug/net9.0/FlappyBird.Windows.dll",
       "args": [],
       "cwd": "${workspaceFolder}",
@@ -19,12 +19,18 @@
       "name": "FlappyBird.Windows|Release",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "buildFlappyBirdRelease",
+      "preLaunchTask": "Build Windows|Release",
       "program": "${workspaceFolder}/FlappyBird.Windows/bin/Release/net9.0/FlappyBird.Windows.dll",
       "args": [],
       "cwd": "${workspaceFolder}",
       "console": "internalConsole",
       "stopAtEntry": false
+    },
+    {
+        "name": "FlappyBird.Android|Debug",
+        "type": "maui",
+        "request": "launch",
+        "preLaunchTask": "maui: Build"
     }
   ]
 }

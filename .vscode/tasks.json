@@ -13,7 +13,7 @@
             "problemMatcher": []
         },
         {
-            "label": "buildFlappyBirdDebug",
+            "label": "Build Windows|Debug",
             "command": "dotnet",
             "type": "process",
             "args": [
@@ -23,12 +23,34 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "buildFlappyBirdRelease",
+            "label": "Build Windows|Release",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
                 "${workspaceFolder}/FlappyBird.Windows/FlappyBird.Windows.csproj",
+                "--configuration",
+                "Release"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Build Android|Debug",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/FlappyBird.Android/FlappyBird.Android.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Build Android|Release",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/FlappyBird.Android/FlappyBird.Android.csproj",
                 "--configuration",
                 "Release"
             ],
