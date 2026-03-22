@@ -77,7 +77,7 @@ public class GameWorld : DrawableGameComponent
         _debugRenderer = new DebugRenderer(128, 256, game.GraphicsDevice);
 
         _inputManager = new InputManager();
-        _inputManager.Mapper.AddMapping(ACTION_JUMP, new InputKey(Keys.Space), new InputKey(true), new InputKey(Buttons.A));
+        _inputManager.Mapper.AddMapping(ACTION_JUMP, new InputKey(Keys.Space), new InputKey(true), new InputKey(Buttons.A), InputKey.Touch());
         _inputManager.Mapper.AddMapping(ACTION_PAUSE, new InputKey(Keys.P), new InputKey(Keys.Escape));
     }
 
