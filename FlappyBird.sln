@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlappyBird.Windows", "Flapp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlappyBird.Android", "FlappyBird.Android\FlappyBird.Android.csproj", "{D168BC09-A557-4048-B5F2-2FC0F93BB806}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlappyBird.Core", "FlappyBird.Core\FlappyBird.Core.csproj", "{D8516BA0-1C4D-44EE-A36C-11177AEF757C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Momo", "Momo\Momo.csproj", "{6BB37BB6-E63F-410E-AA22-AAC4872A3126}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
