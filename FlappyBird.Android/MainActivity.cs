@@ -50,7 +50,11 @@ namespace xyz.flappybird.android
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {
                 View decorView = Window.DecorView;
+
+#pragma warning disable CS0618 // Type or member is obsolete
                 var uiOptions = (int)decorView.SystemUiVisibility;
+#pragma warning restore CS0618
+
                 var newUiOptions = (int)uiOptions;
 
                 newUiOptions |= (int)SystemUiFlags.LowProfile;
@@ -58,7 +62,9 @@ namespace xyz.flappybird.android
                 newUiOptions |= (int)SystemUiFlags.HideNavigation;
                 newUiOptions |= (int)SystemUiFlags.ImmersiveSticky;
 
+#pragma warning disable CS0618 // Type or member is obsolete
                 decorView.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 this.Immersive = true;
             }
