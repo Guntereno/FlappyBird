@@ -2,8 +2,9 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using System.Collections.Generic;
 using System.Linq;
+using Momo.System;
 
-namespace FlappyBird.Engine;
+namespace Momo.Input;
 
 public class InputMapper
 {

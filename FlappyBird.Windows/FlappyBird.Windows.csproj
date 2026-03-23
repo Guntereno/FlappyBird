@@ -28,7 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\\FlappyBird.Core\\FlappyBird.Core.csproj" />
-    <ProjectReference Include="..\\FlappyBird.Engine\FlappyBird.Engine.csproj" />
+    <ProjectReference Include="..\\Momo\\Momo.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\Content\bin\$(MonoGamePlatform)\**\*">

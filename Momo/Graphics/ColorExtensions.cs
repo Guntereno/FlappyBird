@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace FlappyBird.Engine;
+namespace Momo.Graphics;
 
 /// <summary>
 /// Extension methods for the XNA Color type.

@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace FlappyBird.Engine;
+namespace Momo.System;
 
 
 public enum LogLevel

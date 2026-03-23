@@ -11,6 +11,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FlappyBird.Engine\FlappyBird.Engine.csproj" />
+    <ProjectReference Include="..\\Momo\\Momo.csproj" />
   </ItemGroup>
 </Project>

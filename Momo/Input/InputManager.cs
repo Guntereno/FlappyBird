@@ -2,7 +2,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 
-namespace FlappyBird.Engine;
+using Momo.System;
+
+namespace Momo.Input;
 
 public class InputManager
 {

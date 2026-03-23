@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FlappyBird.Engine;
+namespace Momo.System;
 
 public readonly struct FName : IEquatable<FName>
 {

@@ -1,6 +1,8 @@
 // Simplex noise in C# (1D, 2D, 3D)
 // Public domain implementation based on Stefan Gustavson's algorithm.
 
+namespace Momo.Maths;
+
 public static class SimplexNoise
 {
     private static readonly int[] perm = {
