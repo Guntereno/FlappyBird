@@ -1,4 +1,5 @@
 using FlappyBird.Engine;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,8 +13,12 @@ public class GameWorld : DrawableGameComponent
 {
     public event Action OnPlayerDeath;
 
+    private static readonly FName CATEGORY_GAME = new FName("GameWorld");
+
     private class Pipe
     {
+        public int Id;
+
         public float Position;
         public int Height;
 
@@ -23,7 +28,9 @@ public class GameWorld : DrawableGameComponent
 
 
     private const float PIPE_SPAWN_INTERVAL = 1f;
-    private const int PIPE_GAP_VARIANCE = 700; // Variance in the gap between top and bottom pipes
+    private const int PIPE_GAP_VARIANCE = 200;
+    private const float PIPE_MAX_DELTA = 300;
+
     private const int PIPE_GAP_HEIGHT = 400;
     private const int PIPE_WIDTH = 200;
 
@@ -53,6 +60,10 @@ public class GameWorld : DrawableGameComponent
     private Texture2D _groundTexture = null;
 
     private List<Pipe> _pipes = new List<Pipe>();
+
+    private int _pipeCounter = 0;
+
+    private int _pipesCrossed = 0;
 
     private Rectangle _groundBounds;
 
@@ -101,6 +112,8 @@ public class GameWorld : DrawableGameComponent
                 _isGameOver = true;
                 OnPlayerDeath?.Invoke();
             }
+
+            CheckProgress();
         }
 
         base.Update(gameTime);
@@ -250,12 +263,18 @@ public class GameWorld : DrawableGameComponent
 
     private void SpawnPipe()
     {
+        const float frequency = 0.8f; // Adjust to control how quickly the gap position changes
+        float noiseValue = SimplexNoise.Noise(_pipeCounter * frequency);
+
         Pipe pipe = new Pipe()
         {
+            Id = _pipeCounter,
             Position = _bounds.Width + (PIPE_WIDTH / 2),
-            Height = (_bounds.Height / 2) - (PIPE_GAP_VARIANCE / 2) + (int)(_random.NextDouble() * PIPE_GAP_VARIANCE)
+            Height = (_bounds.Height / 2) - (PIPE_GAP_VARIANCE / 2) + (int)(noiseValue * PIPE_GAP_VARIANCE)
         };
         _pipes.Add(pipe);
+
+        _pipeCounter++;
     }
 
     private void DrawPipe(SpriteBatch spriteBatch, Pipe pipe)
@@ -315,5 +334,27 @@ public class GameWorld : DrawableGameComponent
         }
 
         _debugRenderer.DrawRect(_groundBounds, Color.Brown.WithAlpha(0.2f), Color.White, true, 1.0f);
+    }
+
+    private void CheckProgress()
+    {
+        if (_isGameOver || _pipes.Count <= 0)
+        {
+            return;
+        }
+
+        Pipe pipe = _pipes[0];
+
+        if (pipe.Id < _pipesCrossed)
+        {
+            return; // This pipe has already been counted as crossed
+        }
+
+        // Check if we've just passed the pipe (crossed its center)
+        if ((pipe.Position + (PIPE_WIDTH / 2)) < _bird.CollisionBounds.Left)
+        {
+            _pipesCrossed++;
+            Logger.Info(CATEGORY_GAME, "Pipes Crossed: " + _pipesCrossed);
+        }
     }
 }

@@ -1,22 +1,41 @@
 using System;
+using System.Collections.Generic;
 
 namespace FlappyBird.Engine;
 
 public readonly struct FName : IEquatable<FName>
 {
-    private readonly string _internedName;
-    private readonly int _hashCode;
+    private static readonly Dictionary<string, int> _nameToId = new(StringComparer.Ordinal);
+    private static readonly List<string> _idToName = new();
+
+    private readonly int _id;
 
     public FName(string name)
     {
-        _internedName = string.Intern(name ?? throw new ArgumentNullException(nameof(name)));
-        _hashCode = _internedName.GetHashCode();
+        if (name == null)
+            throw new ArgumentNullException(nameof(name));
+
+        if (_nameToId.TryGetValue(name, out int existingId))
+        {
+            _id = existingId;
+            return;
+        }
+
+        // Create a new ID
+        int newId = _idToName.Count;
+        _nameToId[name] = newId;
+        _idToName.Add(name);
+
+        _id = newId;
     }
 
+    public override string ToString() => _idToName[_id];
+
+    public bool Equals(FName other) => _id == other._id;
     public override bool Equals(object obj) => obj is FName other && Equals(other);
-    public bool Equals(FName other) => _hashCode == other._hashCode && _internedName == other._internedName;
-    public override int GetHashCode() => _hashCode;
-    public static bool operator ==(FName left, FName right) => left.Equals(right);
-    public static bool operator !=(FName left, FName right) => !left.Equals(right);
-    public override string ToString() => _internedName;
+
+    public override int GetHashCode() => _id;
+
+    public static bool operator ==(FName left, FName right) => left._id == right._id;
+    public static bool operator !=(FName left, FName right) => left._id != right._id;
 }
