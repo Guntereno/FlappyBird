@@ -29,12 +29,11 @@ public class GameWorld : DrawableGameComponent
     }
 
 
-    private const float PIPE_SPAWN_INTERVAL = 1f;
-    private const int PIPE_GAP_VARIANCE = 200;
-    private const float PIPE_MAX_DELTA = 300;
-
-    private const int PIPE_GAP_HEIGHT = 400;
-    private const int PIPE_WIDTH = 200;
+    private const float PIPE_SPAWN_INTERVAL = 1f; // Time between pipe spawns (seconds)
+    private const int GAP_CENTER_VARIANCE = 300; // Variance range for vertical gap centering (±1/2 value in pixels)
+    private const int PIPE_GAP_SIZE = 250; // Size of the gap between the pipes (pixels)
+    private const int PIPE_WIDTH = 150; // Width of the pipe (pixels)
+    const float PIPE_GAP_CENTER_NOISE_FREQUENCY = 0.5f; // Frequency of the noise function used to generate the pipe height.
 
     // Fixed world height (constant gameplay space). Wider screens show more world horizontally.
     private const float WORLD_HEIGHT = 1080f;
@@ -256,11 +255,11 @@ public class GameWorld : DrawableGameComponent
         int gapCenter = pipe.Height;
         int pipeX = (int)(pipe.Position - (PIPE_WIDTH / 2));
 
-        int topPipeHeight = gapCenter - (PIPE_GAP_HEIGHT / 2);
+        int topPipeHeight = gapCenter - (PIPE_GAP_SIZE / 2);
         Rectangle dest = new Rectangle(pipeX, 0, PIPE_WIDTH, topPipeHeight);
         pipe.TopPipe = dest;
 
-        int bottomPipeHeight = screenHeight - (gapCenter + (PIPE_GAP_HEIGHT / 2));
+        int bottomPipeHeight = screenHeight - (gapCenter + (PIPE_GAP_SIZE / 2));
         dest.Y = screenHeight - bottomPipeHeight;
         dest.Height = bottomPipeHeight;
         pipe.BottomPipe = dest;
@@ -268,15 +267,18 @@ public class GameWorld : DrawableGameComponent
 
     private void SpawnPipe()
     {
-        const float frequency = 0.8f; // Adjust to control how quickly the gap position changes
-        float noiseValue = SimplexNoise.Noise(_pipeCounter * frequency);
+        float noiseValue = SimplexNoise.Noise(_pipeCounter * PIPE_GAP_CENTER_NOISE_FREQUENCY);
+
+        int screenCenter = (_bounds.Height / 2);
+        int rangeMin = screenCenter - (GAP_CENTER_VARIANCE / 2);
 
         Pipe pipe = new Pipe()
         {
             Id = _pipeCounter,
             Position = _bounds.Width + (PIPE_WIDTH / 2),
-            Height = (_bounds.Height / 2) - (PIPE_GAP_VARIANCE / 2) + (int)(noiseValue * PIPE_GAP_VARIANCE)
+            Height = rangeMin + (int)(noiseValue * GAP_CENTER_VARIANCE)
         };
+
         _pipes.Add(pipe);
 
         _pipeCounter++;
