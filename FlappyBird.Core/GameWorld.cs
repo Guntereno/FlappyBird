@@ -16,6 +16,8 @@ public class GameWorld : DrawableGameComponent
 {
     public event Action OnPlayerDeath;
 
+    public event Action<int> OnScoreChanged;
+
     private static readonly FName CATEGORY_GAME = new FName("GameWorld");
 
     private class Pipe
@@ -356,8 +358,20 @@ public class GameWorld : DrawableGameComponent
         // Check if we've just passed the pipe (crossed its center)
         if ((pipe.Position + (PIPE_WIDTH / 2)) < _bird.CollisionBounds.Left)
         {
-            _pipesCrossed++;
+            IncrementScore();
             Logger.Info(CATEGORY_GAME, "Pipes Crossed: " + _pipesCrossed);
         }
+    }
+
+    private void IncrementScore()
+    {
+        _pipesCrossed++;
+        OnScoreChanged?.Invoke(_pipesCrossed);
+    }
+
+    private void SetScore(int score)
+    {
+        _pipesCrossed = score;
+        OnScoreChanged?.Invoke(score);
     }
 }

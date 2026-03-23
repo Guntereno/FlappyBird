@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,6 +17,7 @@ public class FlappyBirdGame : Game
     private GraphicsDeviceManager _graphics = null;
 
     private GameWorld _levelManager = null;
+    private UserInterface _userInterface = null;
 
     public FlappyBirdGame(Platform platform)
     {
@@ -60,6 +62,8 @@ public class FlappyBirdGame : Game
     {
         _graphics.GraphicsDevice.DeviceReset += OnDeviceReset;
 
+        Momo.System.Resources.Initialize(_graphics.GraphicsDevice);
+
         Services.AddService(Content);
 
         CreateLevel();
@@ -72,6 +76,7 @@ public class FlappyBirdGame : Game
         // When the graphics device resets (e.g., window resize or entering/exiting
         // fullscreen), update any cached viewport-dependent values in the game world.
         _levelManager?.OnGraphicsDeviceReset(GraphicsDevice);
+        _userInterface?.OnGraphicsDeviceReset(GraphicsDevice);
     }
 
 
@@ -79,6 +84,10 @@ public class FlappyBirdGame : Game
     {
         Components.Add(_levelManager = new GameWorld(this));
         _levelManager.OnPlayerDeath += RestartGame;
+
+        Components.Add(_userInterface = new UserInterface(this, _levelManager));
+
+        _levelManager.OnScoreChanged += _userInterface.SetScore;
     }
 
     protected override void Update(GameTime gameTime)
@@ -103,6 +112,8 @@ public class FlappyBirdGame : Game
     public void RestartGame()
     {
         Components.Remove(_levelManager);
+        Components.Remove(_userInterface);
+
         CreateLevel();
     }
 }
