@@ -33,7 +33,7 @@ public class GameWorld : DrawableGameComponent
     private const int GAP_CENTER_VARIANCE = 300; // Variance range for vertical gap centering (±1/2 value in pixels)
     private const int PIPE_GAP_SIZE = 250; // Size of the gap between the pipes (pixels)
     private const int PIPE_WIDTH = 150; // Width of the pipe (pixels)
-    const float PIPE_GAP_CENTER_NOISE_FREQUENCY = 0.5f; // Frequency of the noise function used to generate the pipe height.
+    private const float PIPE_GAP_CENTER_NOISE_FREQUENCY = 0.5f; // Frequency of the noise function used to generate the pipe height.
 
     // Fixed world height (constant gameplay space). Wider screens show more world horizontally.
     private const float WORLD_HEIGHT = 1080f;
