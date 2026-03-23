@@ -5,7 +5,7 @@ namespace Momo.System;
 
 public static class Resources
 {
-    public static Texture2D WhiteTexture { get; private set; }
+    public static Texture2D? WhiteTexture { get; private set; } = null;
 
     public static void Initialize(GraphicsDevice graphicsDevice)
     {

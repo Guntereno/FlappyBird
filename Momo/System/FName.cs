@@ -32,7 +32,7 @@ public readonly struct FName : IEquatable<FName>
     public override string ToString() => _idToName[_id];
 
     public bool Equals(FName other) => _id == other._id;
-    public override bool Equals(object obj) => obj is FName other && Equals(other);
+    public override bool Equals(object? obj) => obj is FName other && Equals(other);
 
     public override int GetHashCode() => _id;
 

@@ -16,7 +16,7 @@ public class TextBox : UiElement
         }
     }
 
-    public SpriteFont Font
+    public SpriteFont? Font
     {
         get { return _font; }
         set
@@ -35,10 +35,10 @@ public class TextBox : UiElement
     public Vector2 WrappedTextDimensions { get; private set; }
 
 
-    private string _text;
-    private SpriteFont _font;
+    private string _text = string.Empty;
+    private SpriteFont? _font = null;
 
-    private string _wrappedText = null;
+    private string? _wrappedText = null;
     private bool _wrappedTextDirty = true;
 
 
@@ -52,13 +52,18 @@ public class TextBox : UiElement
 
     public override void Draw(SpriteBatch spriteBatch)
     {
+        if (Font == null)
+            throw new InvalidOperationException("Font must be set before drawing TextBox.");
+
         string text;
         if (Wrapped)
         {
             if (_wrappedTextDirty)
-            {
                 RecalculateWrapping();
-            }
+
+            if (_wrappedText == null)
+                throw new InvalidOperationException("Wrapped text is null after recalculation.");
+
             text = _wrappedText;
         }
         else
@@ -121,6 +126,9 @@ public class TextBox : UiElement
 
     private void RecalculateWrapping()
     {
+        if (Font == null)
+            throw new InvalidOperationException("Font must be set before recalculating text wrapping.");
+
         _wrappedText = WrapText(Font, Text, DrawRect.Width);
         _wrappedTextDirty = false;
 

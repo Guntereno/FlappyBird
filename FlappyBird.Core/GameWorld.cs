@@ -11,9 +11,9 @@ namespace FlappyBird.Core;
 
 public class GameWorld : DrawableGameComponent
 {
-    public event Action OnPlayerDeath;
+    public event Action? OnPlayerDeath;
 
-    public event Action<int> OnScoreChanged;
+    public event Action<int>? OnScoreChanged;
 
     private static readonly FName CATEGORY_GAME = new FName("GameWorld");
 
@@ -48,9 +48,9 @@ public class GameWorld : DrawableGameComponent
     private static readonly FName ACTION_PAUSE = new FName("Pause");
 
 
-    private SpriteBatch _spriteBatch;
+    private SpriteBatch? _spriteBatch = null;
 
-    private InputManager _inputManager;
+    private InputManager  _inputManager;
 
     private Rectangle _bounds;
     private Matrix _cameraMatrix;
@@ -58,8 +58,8 @@ public class GameWorld : DrawableGameComponent
     private float _pipeSpawnTimer = 0f;
     private float _groundScrollOffset = 0f;
 
-    private SlicedSprite _pipeSprite = null;
-    private Texture2D _groundTexture = null;
+    private SlicedSprite? _pipeSprite = null;
+    private Texture2D? _groundTexture = null;
 
     private List<Pipe> _pipes = new List<Pipe>();
 
@@ -123,6 +123,9 @@ public class GameWorld : DrawableGameComponent
 
     public override void Draw(GameTime gameTime)
     {
+        if (_spriteBatch == null)
+            throw new Exception("LoadContent must be called before drawing.");
+
         _spriteBatch.Begin(
             SpriteSortMode.Deferred,
             BlendState.AlphaBlend,
@@ -281,12 +284,18 @@ public class GameWorld : DrawableGameComponent
 
     private void DrawPipe(SpriteBatch spriteBatch, Pipe pipe)
     {
+        if (_pipeSprite == null)
+            throw new Exception("LoadContent must be called before drawing!");
+
         _pipeSprite.Draw(spriteBatch, pipe.TopPipe, Color.White);
         _pipeSprite.Draw(spriteBatch, pipe.BottomPipe, Color.White);
     }
 
     private void DrawGround(SpriteBatch spriteBatch)
     {
+        if (_groundTexture == null)
+            throw new Exception("LoadContent must be called before drawing!");
+
         Rectangle destRect = _groundBounds;
 
         float numRepeats = (float)_bounds.Width / GROUND_TILE_SIZE;

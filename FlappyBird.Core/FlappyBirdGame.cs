@@ -12,10 +12,10 @@ public enum Platform
 
 public class FlappyBirdGame : Game
 {
-    private GraphicsDeviceManager _graphics = null;
+    private GraphicsDeviceManager _graphics;
 
-    private GameWorld _levelManager = null;
-    private UserInterface _userInterface = null;
+    private GameWorld? _levelManager = null;
+    private UserInterface? _userInterface = null;
 
     public FlappyBirdGame(Platform platform)
     {
@@ -69,7 +69,7 @@ public class FlappyBirdGame : Game
         base.Initialize();
     }
 
-    private void OnDeviceReset(object sender, EventArgs e)
+    private void OnDeviceReset(object? sender, EventArgs e)
     {
         // When the graphics device resets (e.g., window resize or entering/exiting
         // fullscreen), update any cached viewport-dependent values in the game world.

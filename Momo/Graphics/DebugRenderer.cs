@@ -17,16 +17,16 @@ public class DebugRenderer : IDisposable
     // --------------------------------------------------------------------
     // -- Private Members
     // --------------------------------------------------------------------
-    private GraphicsDevice _graphicsDevice = null;
-    private BasicEffect _effect = null;
+    private GraphicsDevice? _graphicsDevice = null;
+    private BasicEffect? _effect = null;
 
     private int _triVertexCount = 0;
     private int _triVertexCapacity = 0;
-    private VertexPositionColor[] _triVertices = null;
+    private VertexPositionColor[]? _triVertices = null;
 
     private int _lineVertexCount = 0;
     private int _lineVertexCapacity = 0;
-    private VertexPositionColor[] _lineVertices = null;
+    private VertexPositionColor[]? _lineVertices = null;
 
     // --------------------------------------------------------------------
     // -- Public Methods
@@ -76,6 +76,9 @@ public class DebugRenderer : IDisposable
     {
         if (_triVertexCount == 0 && _lineVertexCount == 0)
             return;
+
+        if (_effect == null || _graphicsDevice == null)
+            throw new InvalidOperationException("DebugRenderer not properly initialized.");
 
         _effect.View = viewMatrix;
         _effect.Projection = projMatrix;
@@ -274,6 +277,9 @@ public class DebugRenderer : IDisposable
 
     public void DrawFilledTriangle(Vector3 p1, Vector3 p2, Vector3 p3, Color colour)
     {
+        if (_triVertices == null)
+            throw new InvalidOperationException("DebugRenderer not properly initialized.");
+
         if (_triVertexCount >= _triVertexCapacity - 3)
         {
 #if DEBUG
@@ -301,6 +307,9 @@ public class DebugRenderer : IDisposable
 
     public void DrawLine(Vector3 startPoint, Vector3 endPoint, Color colour)
     {
+        if (_lineVertices == null)
+            throw new InvalidOperationException("DebugRenderer not properly initialized.");
+
         if (_lineVertexCount >= _lineVertexCapacity - 2)
         {
 #if DEBUG

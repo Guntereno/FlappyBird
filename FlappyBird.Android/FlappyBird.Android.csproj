@@ -15,4 +15,7 @@
     <ProjectReference Include="..\\FlappyBird.Core\\FlappyBird.Core.csproj" />
     <ProjectReference Include="..\\Momo\\Momo.csproj" />
   </ItemGroup>
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
 </Project>

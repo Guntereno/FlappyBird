@@ -7,9 +7,9 @@ namespace FlappyBird.Core;
 
 public class UserInterface : DrawableGameComponent
 {
-    private SpriteBatch _spriteBatch = null;
+    private SpriteBatch? _spriteBatch = null;
 
-    public SpriteFont _font = null;
+    public SpriteFont? _font = null;
 
     private Rectangle _bounds;
 
@@ -47,6 +47,9 @@ public class UserInterface : DrawableGameComponent
 
     public override void Draw(GameTime gameTime)
     {
+        if (_spriteBatch == null)
+            throw new Exception("LoadContent must be called before drawing!");
+
         _spriteBatch.Begin();
 
         _scoreText.Draw(_spriteBatch);

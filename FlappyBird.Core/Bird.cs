@@ -28,8 +28,8 @@ public class Bird
 
 
     // Visual properties
-    private Texture2D _birdTexture = null;
-    private AnimatedSprite _animatedSprite;
+    private Texture2D? _birdTexture = null;
+    private AnimatedSprite? _animatedSprite = null;
 
     private Rectangle _collisionBox;
 
@@ -75,7 +75,8 @@ public class Bird
                 BIRD_HEIGHT
             );
 
-        _animatedSprite.Update(gameTime);
+        if (_animatedSprite != null)
+            _animatedSprite.Update(gameTime);
     }
 
     public void Jump()
@@ -86,10 +87,8 @@ public class Bird
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        if (spriteBatch == null)
-        {
+        if ((spriteBatch == null) || (_animatedSprite == null))
             return;
-        }
 
         _animatedSprite.Draw(spriteBatch, _spriteBounds);
     }
