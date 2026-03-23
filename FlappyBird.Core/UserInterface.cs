@@ -1,14 +1,6 @@
-using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using Momo.System;
-using Momo.Input;
-using Momo.Graphics;
-using Momo.Maths;
 using Momo.Ui;
 
 namespace FlappyBird.Core;
@@ -46,6 +38,7 @@ public class UserInterface : DrawableGameComponent
         _scoreText.HAlign = UiElement.HorizontalAlign.Center;
         _scoreText.VAlign = UiElement.VerticalAlign.Center;
         _scoreText.Text = "0";
+        _scoreText.Scale = 1.0f;
 
         UpdateLayout();
 
@@ -78,6 +71,6 @@ public class UserInterface : DrawableGameComponent
 
     private void UpdateLayout()
     {
-        _scoreText.DrawRect = new Rectangle(20, 20, _bounds.Width - 40, 40);
+        _scoreText.DrawRect = new Rectangle(20, 20, _bounds.Width - 40, 128);
     }
 }
