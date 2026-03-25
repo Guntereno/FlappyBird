@@ -81,10 +81,9 @@ public class FlappyBirdGame : Game
     private void CreateLevel()
     {
         Components.Add(_levelManager = new GameWorld(this));
-        _levelManager.OnPlayerDeath += RestartGame;
-
         Components.Add(_userInterface = new UserInterface(this, _levelManager));
 
+        _levelManager.OnStateChange += HandleGameWorldStateChanged;
         _levelManager.OnScoreChanged += _userInterface.SetScore;
     }
 
@@ -107,11 +106,9 @@ public class FlappyBirdGame : Game
         base.Draw(gameTime);
     }
 
-    public void RestartGame()
+    public void HandleGameWorldStateChanged(GameWorld.State state)
     {
-        Components.Remove(_levelManager);
-        Components.Remove(_userInterface);
-
-        CreateLevel();
+        if (_userInterface != null)
+            _userInterface.HandleGameWorldStateChanged(state);
     }
 }

@@ -13,11 +13,11 @@ public class Bird
         get; private set;
     }
 
+    public bool Hovering {get; set;}
 
     // Position and size properties
     private Vector2 _position;
     private Vector2 _velocity;
-
 
     // Physics constants
     private const float GRAVITY = 1500f;      // Pixels per second squared
@@ -39,10 +39,15 @@ public class Bird
     // Constructor
     public Bird(Game game)
     {
-        _position = new Vector2(300, 300);
-        _velocity = Vector2.Zero;
-
         _collisionBox = new Rectangle(44, 20, 147, 123); // Adjusted to fit the bird's body shape better
+
+        Reset();
+    }
+
+    public void Reset()
+    {
+        SetPosition(new Vector2(300, 300));
+        _velocity = Vector2.Zero;
     }
 
     public void LoadContent(ContentManager content)
@@ -56,24 +61,10 @@ public class Bird
     {
         float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        // Apply gravity to velocity
-        _velocity.Y += GRAVITY * deltaTime;
+        if (!Hovering)
+            _velocity.Y += GRAVITY * deltaTime;
 
-        // Update position based on velocity
-        _position += _velocity * deltaTime;
-
-        // Set bounds of the bird based on its current position
-        Rectangle bounds = _collisionBox;
-        bounds.X += (int)(_position.X - BIRD_WIDTH / 2);
-        bounds.Y += (int)(_position.Y - BIRD_HEIGHT / 2);
-        CollisionBounds = bounds;
-
-        _spriteBounds = new Rectangle(
-                (int)_position.X - BIRD_WIDTH / 2,
-                (int)_position.Y - BIRD_HEIGHT / 2,
-                BIRD_WIDTH,
-                BIRD_HEIGHT
-            );
+        SetPosition(_position + _velocity * deltaTime);
 
         if (_animatedSprite != null)
             _animatedSprite.Update(gameTime);
@@ -91,5 +82,27 @@ public class Bird
             return;
 
         _animatedSprite.Draw(spriteBatch, _spriteBounds);
+    }
+
+    private void SetPosition(Vector2 position)
+    {
+        _position = position;
+        CalculateBounds();
+    }
+
+    private void CalculateBounds()
+    {
+        // Set bounds of the bird based on its current position
+        Rectangle bounds = _collisionBox;
+        bounds.X += (int)(_position.X - BIRD_WIDTH / 2);
+        bounds.Y += (int)(_position.Y - BIRD_HEIGHT / 2);
+        CollisionBounds = bounds;
+
+        _spriteBounds = new Rectangle(
+                (int)_position.X - BIRD_WIDTH / 2,
+                (int)_position.Y - BIRD_HEIGHT / 2,
+                BIRD_WIDTH,
+                BIRD_HEIGHT
+            );
     }
 }

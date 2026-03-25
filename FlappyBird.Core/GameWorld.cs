@@ -11,7 +11,14 @@ namespace FlappyBird.Core;
 
 public class GameWorld : DrawableGameComponent
 {
-    public event Action? OnPlayerDeath;
+    public enum State
+    {
+        Intro,
+        Gameplay,
+        GameOver
+    }
+
+    public event Action<State>? OnStateChange;
 
     public event Action<int>? OnScoreChanged;
 
@@ -43,9 +50,12 @@ public class GameWorld : DrawableGameComponent
 
     private const float LEVEL_SPEED = 800.0f;
 
+    private static readonly FName ACTION_CONTINUE = new FName("Continue");
     private static readonly FName ACTION_JUMP = new FName("Jump");
     private static readonly FName ACTION_PAUSE = new FName("Pause");
 
+
+    private State _state = State.Intro;
 
     private SpriteBatch? _spriteBatch = null;
 
@@ -71,9 +81,6 @@ public class GameWorld : DrawableGameComponent
     private Bird _bird;
 
     private bool _isPaused = false;
-    private bool _isGameOver = false;
-
-    private Random _random = new Random(1234);
 
     private DebugRenderer _debugRenderer;
 
@@ -89,8 +96,11 @@ public class GameWorld : DrawableGameComponent
         _debugRenderer = new DebugRenderer(128, 256, game.GraphicsDevice);
 
         _inputManager = new InputManager();
+        _inputManager.Mapper.AddMapping(ACTION_CONTINUE, new InputKey(Keys.Space), new InputKey(true), new InputKey(Buttons.A), InputKey.Touch());
         _inputManager.Mapper.AddMapping(ACTION_JUMP, new InputKey(Keys.Space), new InputKey(true), new InputKey(Buttons.A), InputKey.Touch());
         _inputManager.Mapper.AddMapping(ACTION_PAUSE, new InputKey(Keys.P), new InputKey(Keys.Escape));
+
+        ChangeState(State.Intro);
     }
 
     public void OnGraphicsDeviceReset(GraphicsDevice graphicsDevice)
@@ -100,24 +110,59 @@ public class GameWorld : DrawableGameComponent
 
     public override void Update(GameTime gameTime)
     {
-        UpdateInput(); // Always check input (for pause handling)
+        _inputManager.Update();
 
-        if (!_isPaused && !_isGameOver)
+        // Handle pause (always checkable)
+        if (_inputManager.IsActionJustPressed(ACTION_PAUSE))
         {
-            UpdatePipes(gameTime);
-            UpdateGround(gameTime);
-            _bird.Update(gameTime);
+            _isPaused = !_isPaused;
+        }
 
-            if (CheckBirdCollision())
-            {
-                _isGameOver = true;
-                OnPlayerDeath?.Invoke();
-            }
+        if (_isPaused)
+        {
+            return;
+        }
 
-            CheckProgress();
+        _bird.Update(gameTime);
+
+        UpdatePipes(gameTime);
+        UpdateGround(gameTime);
+
+        switch (_state)
+        {
+            case State.Intro:
+                CheckForContinue(gameTime, State.Gameplay);
+                break;
+            case State.Gameplay:
+                UpdateGameplay(gameTime);
+                break;
+            case State.GameOver:
+                CheckForContinue(gameTime, State.Intro);
+                break;
         }
 
         base.Update(gameTime);
+    }
+
+    private void CheckForContinue(GameTime gameTime, State nextState)
+    {
+        if(_inputManager.IsActionJustPressed(ACTION_CONTINUE))
+            ChangeState(nextState);
+    }
+
+    private void UpdateGameplay(GameTime gameTime)
+    {
+        if (_inputManager.IsActionJustPressed(ACTION_JUMP))
+        {
+            _bird.Jump();
+        }
+
+        if (CheckBirdCollision())
+        {
+            ChangeState(State.GameOver);
+        }
+
+        CheckProgress();
     }
 
     public override void Draw(GameTime gameTime)
@@ -165,13 +210,24 @@ public class GameWorld : DrawableGameComponent
         _pipeSprite = new SlicedSprite(
             content.Load<Texture2D>("GreenPipe"),
             new Rectangle(0, 0, 128, 128),
-            new Rectangle(38, 49, 30, 28));
+            new Rectangle(38, 50, 30, 26));
 
         _groundTexture = content.Load<Texture2D>("Ground");
 
         _bird.LoadContent(content);
 
         base.LoadContent();
+    }
+
+    private void Reset()
+    {
+        _pipesCrossed = 0;
+        _pipeCounter = 0;
+
+        _pipes.Clear();
+
+        _bird.Reset();
+        _bird.Hovering = true;
     }
 
 
@@ -203,6 +259,9 @@ public class GameWorld : DrawableGameComponent
 
     private void UpdatePipes(GameTime gameTime)
     {
+        if (_state == State.Intro)
+            return;
+
         _pipeSpawnTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         if (_pipeSpawnTimer >= PIPE_SPAWN_INTERVAL)
@@ -222,27 +281,6 @@ public class GameWorld : DrawableGameComponent
             if (pipe.Position < -PIPE_WIDTH)
             {
                 _pipes.RemoveAt(i);
-            }
-        }
-    }
-
-
-    private void UpdateInput()
-    {
-        _inputManager.Update();
-
-        // Handle pause (always checkable)
-        if (_inputManager.IsActionJustPressed(ACTION_PAUSE))
-        {
-            _isPaused = !_isPaused;
-        }
-
-        // Handle other inputs only if not paused
-        if (!_isPaused)
-        {
-            if (_inputManager.IsActionJustPressed(ACTION_JUMP))
-            {
-                _bird.Jump();
             }
         }
     }
@@ -351,7 +389,7 @@ public class GameWorld : DrawableGameComponent
 
     private void CheckProgress()
     {
-        if (_isGameOver || _pipes.Count <= 0)
+        if (_pipes.Count <= 0)
         {
             return;
         }
@@ -377,9 +415,27 @@ public class GameWorld : DrawableGameComponent
         OnScoreChanged?.Invoke(_pipesCrossed);
     }
 
-    private void SetScore(int score)
+    private void ResetScore()
     {
-        _pipesCrossed = score;
-        OnScoreChanged?.Invoke(score);
+        _pipesCrossed = 0;
+        OnScoreChanged?.Invoke(0);
+    }
+
+    private void ChangeState(State state)
+    {
+        switch(state)
+        {
+            case State.Intro:
+                Reset();
+                break;
+
+            case State.Gameplay:
+                _bird.Hovering = false;
+                break;
+        }
+
+        _state = state;
+        OnStateChange?.Invoke(state);
+        Logger.Info(CATEGORY_GAME, $"Entered state '{state}'.");
     }
 }
