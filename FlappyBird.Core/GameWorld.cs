@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using Momo.Audio;
 using Momo.Graphics;
 using Momo.Input;
@@ -72,9 +73,10 @@ public class GameWorld : DrawableGameComponent
     private SlicedSprite? _pipeSprite = null;
     private Texture2D? _groundTexture = null;
 
-    private SoundEffectPool _hitSounds = new SoundEffectPool();
 
+    private Song? _music = null;
     private SoundEffectInstance? _bellSound = null;
+    private SoundEffectPool _hitSounds = new SoundEffectPool();
 
     private List<Pipe> _pipes = new List<Pipe>();
 
@@ -228,6 +230,8 @@ public class GameWorld : DrawableGameComponent
 
         _groundTexture = content.Load<Texture2D>("Ground");
 
+        _music = content.Load<Song>("Audio/Music/GameMusic");
+
         _hitSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Hit01"));
         _hitSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Hit02"));
         _hitSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Hit03"));
@@ -251,6 +255,15 @@ public class GameWorld : DrawableGameComponent
 
         _bird.Reset();
         _bird.Hovering = true;
+
+        if (_music != null)
+        {
+            if (MediaPlayer.State != MediaState.Stopped)
+            {
+                MediaPlayer.Stop();
+            }
+            MediaPlayer.Play(_music);
+        }
     }
 
 
