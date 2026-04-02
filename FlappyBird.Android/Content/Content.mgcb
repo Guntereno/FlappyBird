@@ -13,6 +13,12 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin ../../Content/Audio/SoundEffects/Bell01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../Content/Audio/SoundEffects/Bell01.wav;Audio/SoundEffects/Bell01.wav
+
 #begin ../../Content/Audio/SoundEffects/Flap01.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

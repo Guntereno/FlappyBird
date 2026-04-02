@@ -74,6 +74,8 @@ public class GameWorld : DrawableGameComponent
 
     private SoundEffectPool _hitSounds = new SoundEffectPool();
 
+    private SoundEffectInstance? _bellSound = null;
+
     private List<Pipe> _pipes = new List<Pipe>();
 
     private int _pipeCounter = 0;
@@ -230,6 +232,10 @@ public class GameWorld : DrawableGameComponent
         _hitSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Hit02"));
         _hitSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Hit03"));
         _hitSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Hit04"));
+
+        SoundEffect bellEffect = content.Load<SoundEffect>("Audio/SoundEffects/Bell01");
+        _bellSound = bellEffect.CreateInstance();
+        _bellSound.IsLooped = false;
 
         _bird.LoadContent(content);
 
@@ -422,6 +428,10 @@ public class GameWorld : DrawableGameComponent
         if ((pipe.Position + (PIPE_WIDTH / 2)) < _bird.CollisionBounds.Left)
         {
             IncrementScore();
+
+            _bellSound?.Stop();
+            _bellSound?.Play();
+
             Logger.Info(CATEGORY_GAME, "Pipes Crossed: " + _pipesCrossed);
         }
     }

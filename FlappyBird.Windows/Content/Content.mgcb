@@ -13,11 +13,11 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin ../../Content/Audio/SoundEffects/Flap01.wav
+#begin ../../Content/Audio/SoundEffects/Bell01.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../Content/Audio/SoundEffects/Flap01.wav;Audio/SoundEffects/Flap01.wav
+/build:../../Content/Audio/SoundEffects/Bell01.wav;Audio/SoundEffects/Bell01.wav
 
 #begin ../../Content/Audio/SoundEffects/Flap01.wav
 /importer:WavImporter
@@ -31,29 +31,11 @@
 /processorParam:Quality=Best
 /build:../../Content/Audio/SoundEffects/Flap02.wav;Audio/SoundEffects/Flap02.wav
 
-#begin ../../Content/Audio/SoundEffects/Flap02.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../Content/Audio/SoundEffects/Flap02.wav;Audio/SoundEffects/Flap02.wav
-
 #begin ../../Content/Audio/SoundEffects/Flap03.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:../../Content/Audio/SoundEffects/Flap03.wav;Audio/SoundEffects/Flap03.wav
-
-#begin ../../Content/Audio/SoundEffects/Flap03.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../Content/Audio/SoundEffects/Flap03.wav;Audio/SoundEffects/Flap03.wav
-
-#begin ../../Content/Audio/SoundEffects/Flap04.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../Content/Audio/SoundEffects/Flap04.wav;Audio/SoundEffects/Flap04.wav
 
 #begin ../../Content/Audio/SoundEffects/Flap04.wav
 /importer:WavImporter
