@@ -316,8 +316,12 @@ public class GameWorld : DrawableGameComponent
         int gapCenter = pipe.Height;
         int pipeX = (int)(pipe.Position - (PIPE_WIDTH / 2));
 
-        int topPipeHeight = gapCenter - (PIPE_GAP_SIZE / 2);
-        Rectangle dest = new Rectangle(pipeX, 0, PIPE_WIDTH, topPipeHeight);
+        const int PIPE_TOP_OFFSET = 128; // Hides the top rim of the pipe
+        // (Not needed for the bottom rim, which is hidden by the ground)
+
+        int topPipeHeight = gapCenter - (PIPE_GAP_SIZE / 2) + PIPE_TOP_OFFSET;
+
+        Rectangle dest = new Rectangle(pipeX, -PIPE_TOP_OFFSET, PIPE_WIDTH, topPipeHeight);
         pipe.TopPipe = dest;
 
         int bottomPipeHeight = screenHeight - (gapCenter + (PIPE_GAP_SIZE / 2));
