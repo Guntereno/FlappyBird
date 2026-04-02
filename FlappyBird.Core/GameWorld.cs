@@ -61,7 +61,7 @@ public class GameWorld : DrawableGameComponent
 
     private SpriteBatch? _spriteBatch = null;
 
-    private InputManager  _inputManager;
+    private InputManager _inputManager;
 
     private Rectangle _bounds;
     private Matrix _cameraMatrix;
@@ -141,7 +141,14 @@ public class GameWorld : DrawableGameComponent
                 UpdateGameplay(gameTime);
                 break;
             case State.GameOver:
-                CheckForContinue(gameTime, State.Intro);
+                {
+                    // Only start checking for continue when the bird has fallen off the screen
+                    if(!_bird.CollisionBounds.Intersects(_bounds))
+                    {
+                        _bird.Hovering = true;
+                        CheckForContinue(gameTime, State.Intro);
+                    }
+                }
                 break;
         }
 
@@ -150,7 +157,7 @@ public class GameWorld : DrawableGameComponent
 
     private void CheckForContinue(GameTime gameTime, State nextState)
     {
-        if(_inputManager.IsActionJustPressed(ACTION_CONTINUE))
+        if (_inputManager.IsActionJustPressed(ACTION_CONTINUE))
             ChangeState(nextState);
     }
 
@@ -425,15 +432,9 @@ public class GameWorld : DrawableGameComponent
         OnScoreChanged?.Invoke(_pipesCrossed);
     }
 
-    private void ResetScore()
-    {
-        _pipesCrossed = 0;
-        OnScoreChanged?.Invoke(0);
-    }
-
     private void ChangeState(State state)
     {
-        switch(state)
+        switch (state)
         {
             case State.Intro:
                 Reset();
