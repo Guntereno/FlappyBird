@@ -20,8 +20,6 @@ public class UserInterface : DrawableGameComponent
     private TextBox _scoreText = new TextBox();
     private TextBox _gameOverText = new TextBox();
 
-    private SlicedSprite? _background = null;
-
     private GameWorld.State _state = GameWorld.State.Intro;
 
     private int _score = 0;
@@ -53,12 +51,6 @@ public class UserInterface : DrawableGameComponent
 
         InitDefaultTextBox(_gameOverText, _font);
         _gameOverText.HAlign = UiElement.HorizontalAlign.Center;
-
-        _background = new SlicedSprite(
-            content.Load<Texture2D>("Sprites/UI/Background"),
-            new Rectangle(0, 0, 256, 256),
-            new Rectangle(30, 32, 197, 193)
-        );
 
         UpdateLayout();
 
