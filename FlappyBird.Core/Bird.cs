@@ -1,8 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 using Momo.Graphics;
+using Momo.Audio;
 
 namespace FlappyBird.Core;
 
@@ -35,6 +37,8 @@ public class Bird
 
     private Rectangle _spriteBounds;
 
+    private SoundEffectPool _flapSounds = new SoundEffectPool();
+
 
     // Constructor
     public Bird(Game game)
@@ -55,6 +59,11 @@ public class Bird
         _birdTexture = content.Load<Texture2D>("FlappingBird");
 
         _animatedSprite = new AnimatedSprite(_birdTexture, BIRD_WIDTH, BIRD_HEIGHT, 4, 8, 10f);
+
+        _flapSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Flap01"));
+        _flapSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Flap02"));
+        _flapSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Flap03"));
+        _flapSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Flap04"));
     }
 
     public void Update(GameTime gameTime)
@@ -73,6 +82,8 @@ public class Bird
     public void Jump()
     {
         _velocity.Y = JUMP_STRENGTH;
+
+        _flapSounds.Play();
     }
 
 
