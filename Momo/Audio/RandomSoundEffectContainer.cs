@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework.Audio;
 
+using Momo.MathUtil;
+
 namespace Momo.Audio;
 
 public class SoundEffectPool
@@ -59,16 +61,11 @@ public class SoundEffectPool
     {
         _availableIndices.Clear();
 
-        var indices = Enumerable.Range(0, _sounds.Count).ToList();
-
+        List<int> indices = Enumerable.Range(0, _sounds.Count).ToList();;
+        
         if (shuffle)
         {
-            // Fisher-Yates shuffle
-            for (int i = indices.Count - 1; i > 0; i--)
-            {
-                int j = Random.Shared.Next(i + 1);
-                (indices[i], indices[j]) = (indices[j], indices[i]);
-            }
+            indices = indices.ShuffleCopy();
         }
 
         foreach (var index in indices)
