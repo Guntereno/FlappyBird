@@ -58,7 +58,7 @@ public class Bird
     {
         _birdTexture = content.Load<Texture2D>("FlappingBird");
 
-        _animatedSprite = new AnimatedSprite(_birdTexture, BIRD_WIDTH, BIRD_HEIGHT, 4, 8, 10f);
+        _animatedSprite = new AnimatedSprite(_birdTexture, BIRD_WIDTH, BIRD_HEIGHT, 4, 8, 10f, AnimatedSprite.Behaviour.PlayOnce);
 
         _flapSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Flap01"));
         _flapSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Flap02"));
@@ -75,8 +75,7 @@ public class Bird
 
         SetPosition(_position + _velocity * deltaTime);
 
-        if (_animatedSprite != null)
-            _animatedSprite.Update(gameTime);
+        _animatedSprite?.Update(gameTime);
     }
 
     public void Jump()
@@ -84,6 +83,8 @@ public class Bird
         _velocity.Y = JUMP_STRENGTH;
 
         _flapSounds.Play();
+
+        _animatedSprite?.Reset();
     }
 
 
