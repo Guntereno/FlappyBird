@@ -1,11 +1,13 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Momo.System;
-using Momo.Input;
+using Momo.Audio;
 using Momo.Graphics;
+using Momo.Input;
 using Momo.Maths;
+using Momo.System;
 
 namespace FlappyBird.Core;
 
@@ -69,6 +71,8 @@ public class GameWorld : DrawableGameComponent
 
     private SlicedSprite? _pipeSprite = null;
     private Texture2D? _groundTexture = null;
+
+    private SoundEffectPool _hitSounds = new SoundEffectPool();
 
     private List<Pipe> _pipes = new List<Pipe>();
 
@@ -159,6 +163,7 @@ public class GameWorld : DrawableGameComponent
 
         if (CheckBirdCollision())
         {
+            _hitSounds.Play();
             ChangeState(State.GameOver);
         }
 
@@ -213,6 +218,11 @@ public class GameWorld : DrawableGameComponent
             new Rectangle(38, 50, 30, 26));
 
         _groundTexture = content.Load<Texture2D>("Ground");
+
+        _hitSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Hit01"));
+        _hitSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Hit02"));
+        _hitSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Hit03"));
+        _hitSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Hit04"));
 
         _bird.LoadContent(content);
 

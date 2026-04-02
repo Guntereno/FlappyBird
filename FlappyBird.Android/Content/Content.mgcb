@@ -13,6 +13,54 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin ../../Content/Audio/SoundEffects/Flap01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../Content/Audio/SoundEffects/Flap01.wav;Audio/SoundEffects/Flap01.wav
+
+#begin ../../Content/Audio/SoundEffects/Flap02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../Content/Audio/SoundEffects/Flap02.wav;Audio/SoundEffects/Flap02.wav
+
+#begin ../../Content/Audio/SoundEffects/Flap03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../Content/Audio/SoundEffects/Flap03.wav;Audio/SoundEffects/Flap03.wav
+
+#begin ../../Content/Audio/SoundEffects/Flap04.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../Content/Audio/SoundEffects/Flap04.wav;Audio/SoundEffects/Flap04.wav
+
+#begin ../../Content/Audio/SoundEffects/Hit01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../Content/Audio/SoundEffects/Hit01.wav;Audio/SoundEffects/Hit01.wav
+
+#begin ../../Content/Audio/SoundEffects/Hit02.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../Content/Audio/SoundEffects/Hit02.wav;Audio/SoundEffects/Hit02.wav
+
+#begin ../../Content/Audio/SoundEffects/Hit03.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../Content/Audio/SoundEffects/Hit03.wav;Audio/SoundEffects/Hit03.wav
+
+#begin ../../Content/Audio/SoundEffects/Hit04.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:../../Content/Audio/SoundEffects/Hit04.wav;Audio/SoundEffects/Hit04.wav
+
 #begin ../../Content/Fonts/Nunito-Black.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
