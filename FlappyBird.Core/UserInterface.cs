@@ -3,36 +3,50 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Momo.Ui;
 using Momo.Graphics;
+using System.ComponentModel;
 
 namespace FlappyBird.Core;
 
 public class UserInterface : DrawableGameComponent
 {
     private static readonly string GAME_OVER_FORMAT = "Game Over!\nScore: {0}";
+    private static readonly string SCORE_LABEL = "Score";
+    private static readonly string HIGH_SCORE_LABEL = "High";
 
     private SpriteBatch? _spriteBatch = null;
 
-    public SpriteFont? _font = null;
+    private SpriteFont? _font = null;
 
     private Rectangle _bounds;
 
     private TextBox _introText = new TextBox();
-    private TextBox _scoreText = new TextBox();
+    private TextBox _scoreLabel = new TextBox();
+    private TextBox _scoreValue = new TextBox();
+
+
+    private TextBox _highScoreLabel = new TextBox();
+    private TextBox _highScoreValue = new TextBox();
+
     private TextBox _gameOverText = new TextBox();
 
     private GameWorld.State _state = GameWorld.State.Intro;
 
     private int _score = 0;
 
-    public UserInterface(Game game, GameWorld gameWorld) : base(game)
+    internal UserInterface(Game game, GameWorld gameWorld) : base(game)
     {
         CalculateBounds(game.GraphicsDevice);
     }
 
-    public void SetScore(int score)
+    internal void SetScore(int score)
     {
         _score =  score;
-        _scoreText.Text = score.ToString();
+        _scoreValue.Text = score.ToString();
+    }
+
+    internal void SetHighScore(int highScore)
+    {
+        _highScoreValue.Text = highScore.ToString();
     }
 
     protected override void LoadContent()
@@ -46,8 +60,22 @@ public class UserInterface : DrawableGameComponent
         InitDefaultTextBox(_introText, _font);
         _introText.Text = "Tap to Begin";
 
-        InitDefaultTextBox(_scoreText, _font);
-        _scoreText.Text = "0";
+
+        InitDefaultTextBox(_scoreLabel, _font);
+        _scoreLabel.Scale = .5f;
+        _scoreLabel.Text = SCORE_LABEL;
+
+        InitDefaultTextBox(_scoreValue, _font);
+        _scoreValue.Text = "0";
+
+
+        InitDefaultTextBox(_highScoreLabel, _font);
+        _highScoreLabel.Scale = .5f;
+        _highScoreLabel.Text = HIGH_SCORE_LABEL;
+
+        InitDefaultTextBox(_highScoreValue, _font);
+        _highScoreValue.Text = "0";
+
 
         InitDefaultTextBox(_gameOverText, _font);
         _gameOverText.HAlign = UiElement.HorizontalAlign.Center;
@@ -79,7 +107,10 @@ public class UserInterface : DrawableGameComponent
                 _introText.Draw(_spriteBatch);
                 break;
             case GameWorld.State.Gameplay:
-                _scoreText.Draw(_spriteBatch);
+                _scoreLabel.Draw(_spriteBatch);
+                _scoreValue.Draw(_spriteBatch);
+                _highScoreLabel.Draw(_spriteBatch);
+                _highScoreValue.Draw(_spriteBatch);
                 break;
             case GameWorld.State.GameOver:
                 _gameOverText.Draw(_spriteBatch);
@@ -107,17 +138,41 @@ public class UserInterface : DrawableGameComponent
     private void UpdateLayout()
     {
         _introText.DrawRect = _bounds;
-        _scoreText.DrawRect = new Rectangle(20, 20, _bounds.Width - 40, 128);
+
+        const int BORDER = 20;
+        const int ELEMENT_WIDTH = 300;
+        const int LABEL_HEIGHT = 60;
+        const int VALUE_HEIGHT = 100;
+
+        int scoreLeft = _bounds.Center.X - (ELEMENT_WIDTH / 2);
+        _scoreLabel.DrawRect = new Rectangle(scoreLeft, BORDER, ELEMENT_WIDTH, LABEL_HEIGHT);
+        _scoreValue.DrawRect = new Rectangle(scoreLeft, _scoreLabel.DrawRect.Bottom, ELEMENT_WIDTH, VALUE_HEIGHT);
+
+        int highScoreLeft = _bounds.Right - BORDER - ELEMENT_WIDTH;
+
+        _highScoreLabel.DrawRect = new Rectangle(highScoreLeft, BORDER, ELEMENT_WIDTH, LABEL_HEIGHT);
+        _highScoreValue.DrawRect = new Rectangle(highScoreLeft, _highScoreLabel.DrawRect.Bottom, ELEMENT_WIDTH, VALUE_HEIGHT);
+
         _gameOverText.DrawRect = _bounds;
     }
 
     internal void HandleGameWorldStateChanged(GameWorld.State state)
     {
-        if(state == GameWorld.State.GameOver)
+        switch (state)
         {
-            _gameOverText.Text = string.Format(GAME_OVER_FORMAT, _score);
-        }
+            case GameWorld.State.GameOver:
+                {
+                    _gameOverText.Text = string.Format(GAME_OVER_FORMAT, _score);
+                }
+                break;
 
+            case GameWorld.State.Gameplay:
+                {
+                    _score = 0;
+                    _scoreValue.Text = _score.ToString();
+                }
+                break;
+        }
         _state = state;
     }
 }

@@ -231,6 +231,7 @@ public class GameWorld : DrawableGameComponent
         _groundTexture = content.Load<Texture2D>("Ground");
 
         _music = content.Load<Song>("Audio/Music/GameMusic");
+        PlayMusic();
 
         _hitSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Hit01"));
         _hitSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Hit02"));
@@ -256,6 +257,11 @@ public class GameWorld : DrawableGameComponent
         _bird.Reset();
         _bird.Hovering = true;
 
+        PlayMusic();
+    }
+
+    private void PlayMusic()
+    {
         if (_music != null)
         {
             if (MediaPlayer.State != MediaState.Stopped)
@@ -265,7 +271,6 @@ public class GameWorld : DrawableGameComponent
             MediaPlayer.Play(_music);
         }
     }
-
 
     private void CalculateBounds(GraphicsDevice graphicsDevice)
     {

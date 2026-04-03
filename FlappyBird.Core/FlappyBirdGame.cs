@@ -17,6 +17,8 @@ public class FlappyBirdGame : Game
     private GameWorld? _levelManager = null;
     private UserInterface? _userInterface = null;
 
+    private int _highScore = 0;
+
     public FlappyBirdGame(Platform platform)
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -84,7 +86,7 @@ public class FlappyBirdGame : Game
         Components.Add(_userInterface = new UserInterface(this, _levelManager));
 
         _levelManager.OnStateChange += HandleGameWorldStateChanged;
-        _levelManager.OnScoreChanged += _userInterface.SetScore;
+        _levelManager.OnScoreChanged += HandleScoreChanged;
     }
 
     protected override void Update(GameTime gameTime)
@@ -110,5 +112,16 @@ public class FlappyBirdGame : Game
     {
         if (_userInterface != null)
             _userInterface.HandleGameWorldStateChanged(state);
+    }
+
+    public void HandleScoreChanged(int score)
+    {
+        if(score > _highScore)
+        {
+            _highScore = score;
+            _userInterface?.SetHighScore(_highScore);
+        }
+
+        _userInterface?.SetScore(score);
     }
 }
