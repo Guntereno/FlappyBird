@@ -14,9 +14,7 @@ public class DebugRenderer : IDisposable
     const int kDefaultCircleSegments = 16;
     const int kDefaultRoundCapSegments = 6;
 
-    // --------------------------------------------------------------------
-    // -- Private Members
-    // --------------------------------------------------------------------
+
     private GraphicsDevice? _graphicsDevice = null;
     private BasicEffect? _effect = null;
 
@@ -28,9 +26,7 @@ public class DebugRenderer : IDisposable
     private int _lineVertexCapacity = 0;
     private VertexPositionColor[]? _lineVertices = null;
 
-    // --------------------------------------------------------------------
-    // -- Public Methods
-    // --------------------------------------------------------------------
+
     public DebugRenderer(int triCapacity, int lineCapacity, GraphicsDevice graphicsDevice)
     {
         if (lineCapacity <= 0)

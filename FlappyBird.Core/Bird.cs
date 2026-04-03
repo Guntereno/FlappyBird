@@ -1,10 +1,9 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Audio;
-
-using Momo.Graphics;
 using Momo.Audio;
+using MonoGame.Extended.Graphics;
 
 namespace FlappyBird.Core;
 
@@ -15,13 +14,11 @@ public class Bird
         get; private set;
     }
 
-    public bool Hovering {get; set;}
+    public bool Hovering { get; set; }
 
-    // Position and size properties
-    private Vector2 _position;
-    private Vector2 _velocity;
 
-    // Physics constants
+    private static readonly string FLAPPING_ANIM_NAME = "flapping";
+
     private const float GRAVITY = 1500f;      // Pixels per second squared
     private const float JUMP_STRENGTH = -400f; // Negative because Y goes down
 
@@ -29,9 +26,12 @@ public class Bird
     private const int BIRD_HEIGHT = 172;
 
 
+    // Position and size properties
+    private Vector2 _position;
+    private Vector2 _velocity;
+
     // Visual properties
-    private Texture2D? _birdTexture = null;
-    private AnimatedSprite? _animatedSprite = null;
+    private AnimatedSprite? _sprite = null;
 
     private Rectangle _collisionBox;
 
@@ -56,9 +56,25 @@ public class Bird
 
     public void LoadContent(ContentManager content)
     {
-        _birdTexture = content.Load<Texture2D>("FlappingBird");
+        Texture2D texture = content.Load<Texture2D>("FlappingBird");
+        Texture2DAtlas atlas = Texture2DAtlas.Create("FlappingBird", texture, BIRD_WIDTH, BIRD_HEIGHT, 8, 0, 0);
+        SpriteSheet spriteSheet = new SpriteSheet("FlappingBird", atlas);
 
-        _animatedSprite = new AnimatedSprite(_birdTexture, BIRD_WIDTH, BIRD_HEIGHT, 4, 8, 10f, AnimatedSprite.Behaviour.PlayOnce);
+        TimeSpan duration = TimeSpan.FromSeconds(0.1f);
+        spriteSheet.DefineAnimation(FLAPPING_ANIM_NAME, builder =>
+        {
+            builder.IsLooping(false)
+                .AddFrame("FlappingBird_0", duration)
+                .AddFrame("FlappingBird_1", duration)
+                .AddFrame("FlappingBird_2", duration)
+                .AddFrame("FlappingBird_3", duration)
+                .AddFrame("FlappingBird_4", duration)
+                .AddFrame("FlappingBird_5", duration);
+        });
+
+        new SpriteSheet("SpriteSheet/adventurer", atlas);
+
+        _sprite = new AnimatedSprite(spriteSheet, FLAPPING_ANIM_NAME);
 
         _flapSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Flap01"));
         _flapSounds.Add(content.Load<SoundEffect>("Audio/SoundEffects/Flap02"));
@@ -71,11 +87,13 @@ public class Bird
         float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         if (!Hovering)
+        {
             _velocity.Y += GRAVITY * deltaTime;
+        }
 
         SetPosition(_position + _velocity * deltaTime);
 
-        _animatedSprite?.Update(gameTime);
+        _sprite?.Update(gameTime);
     }
 
     public void Jump()
@@ -84,17 +102,20 @@ public class Bird
 
         _flapSounds.Play();
 
-        _animatedSprite?.Reset();
+        _sprite?.SetAnimation(FLAPPING_ANIM_NAME);
     }
 
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        if ((spriteBatch == null) || (_animatedSprite == null))
+        if ((spriteBatch == null) || (_sprite == null))
+        {
             return;
+        }
 
-        _animatedSprite.Draw(spriteBatch, _spriteBounds);
+        spriteBatch.Draw(_sprite, _spriteBounds.Location.ToVector2(), 0);
     }
+
 
     private void SetPosition(Vector2 position)
     {
