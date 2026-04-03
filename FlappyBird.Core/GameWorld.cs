@@ -9,6 +9,7 @@ using Momo.Graphics;
 using Momo.Input;
 using Momo.Maths;
 using Momo.System;
+using MonoGame.Extended.Graphics;
 
 namespace FlappyBird.Core;
 
@@ -70,7 +71,7 @@ public class GameWorld : DrawableGameComponent
     private float _pipeSpawnTimer = 0f;
     private float _groundScrollOffset = 0f;
 
-    private SlicedSprite? _pipeSprite = null;
+    private NinePatch? _pipeNinePatch = null;
     private Texture2D? _groundTexture = null;
 
 
@@ -223,7 +224,8 @@ public class GameWorld : DrawableGameComponent
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
         var content = Game.Services.GetService<ContentManager>();
-        _pipeSprite = new SlicedSprite(
+
+        _pipeNinePatch = NinePatchExtensions.Create(
             content.Load<Texture2D>("GreenPipe"),
             new Rectangle(0, 0, 128, 128),
             new Rectangle(38, 50, 30, 26));
@@ -369,11 +371,11 @@ public class GameWorld : DrawableGameComponent
 
     private void DrawPipe(SpriteBatch spriteBatch, Pipe pipe)
     {
-        if (_pipeSprite == null)
+        if (_pipeNinePatch == null)
             throw new Exception("LoadContent must be called before drawing!");
 
-        _pipeSprite.Draw(spriteBatch, pipe.TopPipe, Color.White);
-        _pipeSprite.Draw(spriteBatch, pipe.BottomPipe, Color.White);
+        spriteBatch.Draw(_pipeNinePatch, pipe.TopPipe, Color.White);
+        spriteBatch.Draw(_pipeNinePatch, pipe.BottomPipe, Color.White);
     }
 
     private void DrawGround(SpriteBatch spriteBatch)
