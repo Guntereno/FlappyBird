@@ -42,6 +42,13 @@ public class GameWorld : DrawableGameComponent
         public Rectangle BottomPipe;
     }
 
+    private class Cloud
+    {
+        public float Position;
+        public float HeightNormalised;
+        public Sprite? Sprite = null;
+    }
+
     private Rectangle CameraBounds
     {
         get
@@ -79,6 +86,11 @@ public class GameWorld : DrawableGameComponent
 
     private const float LEVEL_SPEED = 800.0f;
 
+    // Cloud constants
+    private const float CLOUD_SPAWN_INTERVAL = 1.0f; // Seconds between spawn attempts
+    private const float CLOUD_MOVE_SPEED = 200f; // Cloud movement speed
+
+
     private static readonly FName ACTION_CONTINUE = new FName("Continue");
     private static readonly FName ACTION_JUMP = new FName("Jump");
     private static readonly FName ACTION_PAUSE = new FName("Pause");
@@ -93,16 +105,20 @@ public class GameWorld : DrawableGameComponent
     private OrthographicCamera? _camera;
 
     private float _pipeSpawnTimer = 0f;
+    private float _cloudSpawnTimer = 0f;
     private float _groundScrollOffset = 0f;
 
     private NinePatch? _pipeNinePatch = null;
     private Texture2D? _groundTexture = null;
+    private Texture2DAtlas? _cloudsAtlas = null;
+    private Sprite[]? _cloudSprites = null;
 
     private Song? _music = null;
     private SoundEffectInstance? _bellSound = null;
     private SoundEffectPool _hitSounds = new SoundEffectPool();
 
     private List<Pipe> _pipes = new List<Pipe>();
+    private List<Cloud> _clouds = new List<Cloud>();
 
     private int _pipeCounter = 0;
 
@@ -171,6 +187,7 @@ public class GameWorld : DrawableGameComponent
 
         _bird.Update(gameTime);
 
+        UpdateClouds(gameTime);
         UpdatePipes(gameTime);
         UpdateGround(gameTime);
 
@@ -238,6 +255,14 @@ public class GameWorld : DrawableGameComponent
             samplerState: SamplerState.LinearWrap,
             transformMatrix: transformMatrix);
 
+
+        Rectangle cameraBounds = CameraBounds;
+
+        foreach (var cloud in _clouds)
+        {
+            cameraBounds = DrawCloud(cameraBounds, cloud);
+        }
+
         foreach (var pipe in _pipes)
         {
             DrawPipe(_spriteBatch, pipe);
@@ -260,6 +285,18 @@ public class GameWorld : DrawableGameComponent
 #endif
     }
 
+    private Rectangle DrawCloud(Rectangle cameraBounds, Cloud cloud)
+    {
+        if (_cloudSprites == null)
+        {
+            throw new Exception("Cloud sprites have not been loaded!");
+        }
+
+        float screenHeight = (cloud.HeightNormalised * (float)cameraBounds.Height) + (float)cameraBounds.Top;
+        Vector2 position = new Vector2(cloud.Position, screenHeight);
+        _spriteBatch.Draw(cloud.Sprite, position);
+        return cameraBounds;
+    }
 
     protected override void LoadContent()
     {
@@ -271,6 +308,14 @@ public class GameWorld : DrawableGameComponent
             content.Load<Texture2D>("GreenPipe"),
             new Rectangle(0, 0, 128, 128),
             new Rectangle(38, 50, 30, 26));
+
+        _cloudsAtlas = content.Load<Texture2DAtlas>("CloudsAtlas");
+        int numClouds = _cloudsAtlas.RegionCount;
+        _cloudSprites = new Sprite[numClouds];
+        for (int i = 0; i < numClouds; ++i)
+        {
+            _cloudSprites[i] = _cloudsAtlas.CreateSprite(i);
+        }
 
         _groundTexture = content.Load<Texture2D>("Ground");
 
@@ -323,6 +368,58 @@ public class GameWorld : DrawableGameComponent
         {
             _groundScrollOffset -= GROUND_TILE_SIZE;
         }
+    }
+
+    private void UpdateClouds(GameTime gameTime)
+    {
+        float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        
+        // Try to spawn a new cloud at random intervals
+        _cloudSpawnTimer += deltaTime;
+        if (_cloudSpawnTimer >= CLOUD_SPAWN_INTERVAL && Random.Shared.Next(10) < 3)
+        {
+            SpawnCloud();
+            _cloudSpawnTimer = 0f;
+        }
+
+        // Move and remove off-screen clouds
+        for (int i = _clouds.Count - 1; i >= 0; i--)
+        {
+            Cloud cloud = _clouds[i];
+            cloud.Position -= CLOUD_MOVE_SPEED * deltaTime;
+
+            if (cloud.Sprite == null)
+            {
+                throw new Exception("Cloud sprite is null!");
+            }
+
+            int spriteWidth = cloud.Sprite.Size.X;
+            if ((cloud.Position + spriteWidth) < CameraBounds.Left)
+            {
+                _clouds.RemoveAt(i);
+            }
+        }
+    }
+
+    private void SpawnCloud()
+    {
+        if (_cloudSprites == null)
+        {
+            throw new Exception("Cloud sprites aren't loaded!");
+        }
+
+        int randomIndex = Random.Shared.Next(_cloudSprites.Length);
+        Sprite sprite = _cloudSprites[randomIndex];
+        Point spriteSize = sprite.Size;
+
+        Cloud cloud = new Cloud
+        {
+            Position = CameraBounds.Right + (spriteSize.X / 2),
+            HeightNormalised = (float)Random.Shared.NextDouble(),
+            Sprite = sprite
+        };
+
+        _clouds.Add(cloud);
     }
 
     private void UpdatePipes(GameTime gameTime)

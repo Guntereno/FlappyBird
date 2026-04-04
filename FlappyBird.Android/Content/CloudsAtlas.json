@@ -1,0 +1,115 @@
+{
+  "frames": [
+    {
+      "filename": "Cloud02",
+      "frame": {
+        "x": 4,
+        "y": 4,
+        "w": 263,
+        "h": 181
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 263,
+        "h": 181
+      },
+      "sourceSize": {
+        "w": 263,
+        "h": 181
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "Cloud01",
+      "frame": {
+        "x": 4,
+        "y": 193,
+        "w": 252,
+        "h": 177
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 252,
+        "h": 177
+      },
+      "sourceSize": {
+        "w": 252,
+        "h": 177
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "Cloud04",
+      "frame": {
+        "x": 264,
+        "y": 193,
+        "w": 244,
+        "h": 172
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 244,
+        "h": 172
+      },
+      "sourceSize": {
+        "w": 244,
+        "h": 172
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "Cloud03",
+      "frame": {
+        "x": 275,
+        "y": 4,
+        "w": 253,
+        "h": 170
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 253,
+        "h": 170
+      },
+      "sourceSize": {
+        "w": 253,
+        "h": 170
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  ],
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "CloudsTexture.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1024,
+      "h": 512
+    },
+    "scale": 1
+  }
+}

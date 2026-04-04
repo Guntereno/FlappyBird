@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "version": "0.6.7"
+  },
+  "savePath": "E:\\dev\\XNA\\FlappyBird\\Content\\Sprites",
+  "images": [
+    {
+      "name": "Cloud01.png",
+      "path": "E:/dev/XNA/FlappyBird/SourceAssets/Sprites/Export/Cloud01.png",
+      "folder": ""
+    },
+    {
+      "name": "Cloud02.png",
+      "path": "E:/dev/XNA/FlappyBird/SourceAssets/Sprites/Export/Cloud02.png",
+      "folder": ""
+    },
+    {
+      "name": "Cloud03.png",
+      "path": "E:/dev/XNA/FlappyBird/SourceAssets/Sprites/Export/Cloud03.png",
+      "folder": ""
+    },
+    {
+      "name": "Cloud04.png",
+      "path": "E:/dev/XNA/FlappyBird/SourceAssets/Sprites/Export/Cloud04.png",
+      "folder": ""
+    }
+  ],
+  "folders": [],
+  "packOptions": {
+    "textureName": "CloudsTexture",
+    "textureFormat": "png",
+    "removeFileExtension": true,
+    "prependFolderName": false,
+    "base64Export": false,
+    "tinify": false,
+    "tinifyKey": "",
+    "scale": 1,
+    "filter": "none",
+    "exporter": "JSON (array)",
+    "fileName": "pack-result",
+    "savePath": "E:\\dev\\XNA\\FlappyBird\\Content\\Sprites",
+    "width": 1024,
+    "height": 512,
+    "fixedSize": false,
+    "powerOfTwo": true,
+    "padding": 4,
+    "extrude": 0,
+    "allowRotation": false,
+    "allowTrim": true,
+    "trimMode": "trim",
+    "alphaThreshold": "0",
+    "detectIdentical": true,
+    "packer": "MaxRectsBin",
+    "packerMethod": "BestShortSideFit"
+  }
+}
