@@ -9,7 +9,9 @@ using Momo.Graphics;
 using Momo.Input;
 using Momo.Maths;
 using Momo.System;
+using MonoGame.Extended;
 using MonoGame.Extended.Graphics;
+using MonoGame.Extended.ViewportAdapters;
 
 namespace FlappyBird.Core;
 
@@ -26,6 +28,7 @@ public class GameWorld : DrawableGameComponent
 
     public event Action<int>? OnScoreChanged;
 
+
     private static readonly FName CATEGORY_GAME = new FName("GameWorld");
 
     private class Pipe
@@ -39,6 +42,28 @@ public class GameWorld : DrawableGameComponent
         public Rectangle BottomPipe;
     }
 
+    private Rectangle CameraBounds
+    {
+        get
+        {
+            if(_camera == null)
+            {
+                throw new Exception("Camera not initialised.");
+            }
+
+            return _camera.BoundingRectangle.ToRectangle();
+        }
+    }
+
+    private Rectangle GroundBounds
+    {
+        get
+        {
+            Rectangle cameraBounds = CameraBounds;
+            int groundY = cameraBounds.Height - GROUND_TILE_SIZE;
+            return new Rectangle(0, groundY, cameraBounds.Width, GROUND_TILE_SIZE);
+        }
+    }
 
     private const float PIPE_SPAWN_INTERVAL = 1f; // Time between pipe spawns (seconds)
     private const int GAP_CENTER_VARIANCE = 300; // Variance range for vertical gap centering (±1/2 value in pixels)
@@ -62,18 +87,16 @@ public class GameWorld : DrawableGameComponent
     private State _state = State.Intro;
 
     private SpriteBatch? _spriteBatch = null;
-
+    
     private InputManager _inputManager;
 
-    private Rectangle _bounds;
-    private Matrix _cameraMatrix;
+    private OrthographicCamera? _camera;
 
     private float _pipeSpawnTimer = 0f;
     private float _groundScrollOffset = 0f;
 
     private NinePatch? _pipeNinePatch = null;
     private Texture2D? _groundTexture = null;
-
 
     private Song? _music = null;
     private SoundEffectInstance? _bellSound = null;
@@ -85,8 +108,6 @@ public class GameWorld : DrawableGameComponent
 
     private int _pipesCrossed = 0;
 
-    private Rectangle _groundBounds;
-
     private Bird _bird;
 
     private bool _isPaused = false;
@@ -97,8 +118,6 @@ public class GameWorld : DrawableGameComponent
     public GameWorld(Game game) : base(game)
     {
         _pipeSpawnTimer = 0f;
-
-        CalculateBounds(game.GraphicsDevice);
 
         _bird = new Bird(game);
 
@@ -112,9 +131,27 @@ public class GameWorld : DrawableGameComponent
         ChangeState(State.Intro);
     }
 
-    public void OnGraphicsDeviceReset(GraphicsDevice graphicsDevice)
+    public override void Initialize()
     {
-        CalculateBounds(graphicsDevice);
+        OnViewportUpdated();
+
+        base.Initialize();
+    }
+
+    public void OnViewportUpdated()
+    {
+        // Check to prevent division by zero or crashes if window is minimized
+        if (GraphicsDevice.Viewport.Width <= 0 || GraphicsDevice.Viewport.Height <= 0)
+            return;
+
+        // Calculate the virtual width based on current window aspect ratio
+        float aspectRatio = GraphicsDevice.Viewport.AspectRatio;
+        int virtualWidth = (int)(WORLD_HEIGHT * aspectRatio);
+
+        // Use ScalingViewportAdapter to allow the 'world' to map to these virtual units
+        var viewportAdapter = new ScalingViewportAdapter(GraphicsDevice, virtualWidth, (int)WORLD_HEIGHT);
+
+        _camera = new OrthographicCamera(viewportAdapter);
     }
 
     public override void Update(GameTime gameTime)
@@ -148,7 +185,7 @@ public class GameWorld : DrawableGameComponent
             case State.GameOver:
                 {
                     // Only start checking for continue when the bird has fallen off the screen
-                    if(!_bird.CollisionBounds.Intersects(_bounds))
+                    if (!_bird.CollisionBounds.Intersects(CameraBounds))
                     {
                         _bird.Hovering = true;
                         CheckForContinue(gameTime, State.Intro);
@@ -185,16 +222,21 @@ public class GameWorld : DrawableGameComponent
     public override void Draw(GameTime gameTime)
     {
         if (_spriteBatch == null)
+        {
             throw new Exception("LoadContent must be called before drawing.");
+        }
 
+        if (_camera == null)
+        {
+            throw new Exception("Initialize must be called before drawing.");
+        }
+
+        Matrix transformMatrix = _camera.GetViewMatrix();
         _spriteBatch.Begin(
-            SpriteSortMode.Deferred,
-            BlendState.AlphaBlend,
-            SamplerState.LinearWrap,
-            null,
-            null,
-            null,
-            _cameraMatrix);
+            sortMode: SpriteSortMode.Deferred,
+            blendState: BlendState.AlphaBlend,
+            samplerState: SamplerState.LinearWrap,
+            transformMatrix: transformMatrix);
 
         foreach (var pipe in _pipes)
         {
@@ -213,7 +255,7 @@ public class GameWorld : DrawableGameComponent
         DebugRenderCollisionBoxes();
 
         Matrix viewMatrix = Matrix.CreateLookAt(Vector3.Backward, Vector3.Zero, Vector3.Up);
-        Matrix projMatrix = Matrix.CreateOrthographicOffCenter(0, _bounds.Width, _bounds.Height, 0, 0, 1);
+        Matrix projMatrix = Matrix.CreateOrthographicOffCenter(0, CameraBounds.Width, CameraBounds.Height, 0, 0, 1);
         _debugRenderer.End(viewMatrix, projMatrix);
 #endif
     }
@@ -274,23 +316,6 @@ public class GameWorld : DrawableGameComponent
         }
     }
 
-    private void CalculateBounds(GraphicsDevice graphicsDevice)
-    {
-        float screenWidth = graphicsDevice.Viewport.Width;
-        float screenHeight = graphicsDevice.Viewport.Height;
-
-        // Keep the vertical world size constant and expand horizontally based on aspect.
-        float worldWidth = WORLD_HEIGHT * (screenWidth / screenHeight);
-        _bounds = new Rectangle(0, 0, (int)MathF.Ceiling(worldWidth), (int)WORLD_HEIGHT);
-
-        int groundY = _bounds.Height - GROUND_TILE_SIZE;
-        _groundBounds = new Rectangle(0, groundY, _bounds.Width, GROUND_TILE_SIZE);
-
-        // For SpriteBatch, use a scale matrix to map world units to screen pixels.
-        float scale = screenHeight / WORLD_HEIGHT;
-        _cameraMatrix = Matrix.CreateScale(scale, scale, 1f);
-    }
-
     private void UpdateGround(GameTime gameTime)
     {
         _groundScrollOffset += LEVEL_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -331,7 +356,7 @@ public class GameWorld : DrawableGameComponent
 
     private void RecalculatePipeRectangles(Pipe pipe)
     {
-        int screenHeight = _bounds.Height;
+        int screenHeight = CameraBounds.Height;
 
         int gapCenter = pipe.Height;
         int pipeX = (int)(pipe.Position - (PIPE_WIDTH / 2));
@@ -354,13 +379,13 @@ public class GameWorld : DrawableGameComponent
     {
         float noiseValue = SimplexNoise.Noise(_pipeCounter * PIPE_GAP_CENTER_NOISE_FREQUENCY);
 
-        int screenCenter = (_bounds.Height / 2);
+        int screenCenter = (CameraBounds.Height / 2);
         int rangeMin = screenCenter - (GAP_CENTER_VARIANCE / 2);
 
         Pipe pipe = new Pipe()
         {
             Id = _pipeCounter,
-            Position = _bounds.Width + (PIPE_WIDTH / 2),
+            Position = CameraBounds.Width + (PIPE_WIDTH / 2),
             Height = rangeMin + (int)(noiseValue * GAP_CENTER_VARIANCE)
         };
 
@@ -383,14 +408,12 @@ public class GameWorld : DrawableGameComponent
         if (_groundTexture == null)
             throw new Exception("LoadContent must be called before drawing!");
 
-        Rectangle destRect = _groundBounds;
-
-        float numRepeats = (float)_bounds.Width / GROUND_TILE_SIZE;
+        float numRepeats = (float)CameraBounds.Width / GROUND_TILE_SIZE;
         int sampleX = (int)(_groundScrollOffset / GROUND_TILE_SIZE * _groundTexture.Width);
         int sampleWidth = (int)(_groundTexture.Width * numRepeats);
         Rectangle sourceRect = new Rectangle(sampleX, 0, sampleWidth, _groundTexture.Height);
 
-        spriteBatch.Draw(_groundTexture, destRect, sourceRect, Color.White);
+        spriteBatch.Draw(_groundTexture, GroundBounds, sourceRect, Color.White);
     }
 
     private bool CheckBirdCollision()
@@ -413,7 +436,7 @@ public class GameWorld : DrawableGameComponent
         }
 
         // Check collision with ground
-        if (birdBounds.Intersects(_groundBounds))
+        if (birdBounds.Intersects(GroundBounds))
             return true;
 
         return false;
@@ -431,7 +454,7 @@ public class GameWorld : DrawableGameComponent
             _debugRenderer.DrawRect(pipe.BottomPipe, Color.Green.WithAlpha(0.2f), Color.White, true, 1.0f);
         }
 
-        _debugRenderer.DrawRect(_groundBounds, Color.Brown.WithAlpha(0.2f), Color.White, true, 1.0f);
+        _debugRenderer.DrawRect(GroundBounds, Color.Brown.WithAlpha(0.2f), Color.White, true, 1.0f);
     }
 
     private void CheckProgress()

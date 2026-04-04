@@ -19,9 +19,8 @@ public class Bird
 
     private static readonly string FLAPPING_ANIM_NAME = "flapping";
 
-    private const float GRAVITY = 1500f;      // Pixels per second squared
+    private const float GRAVITY = 1500f; // Pixels per second squared
     private const float JUMP_STRENGTH = -400f; // Negative because Y goes down
-
     private const int BIRD_WIDTH = 256;
     private const int BIRD_HEIGHT = 172;
 

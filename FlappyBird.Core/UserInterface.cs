@@ -122,7 +122,7 @@ public class UserInterface : DrawableGameComponent
         base.Draw(gameTime);
     }
 
-    public void OnGraphicsDeviceReset(GraphicsDevice graphicsDevice)
+    public void OnViewportUpdated(GraphicsDevice graphicsDevice)
     {
         CalculateBounds(graphicsDevice);
     }

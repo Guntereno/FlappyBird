@@ -35,11 +35,10 @@ public class FlappyBirdGame : Game
 #endif
 
         int screenWidth, screenHeight;
-
         if(windowed)
         {
-            screenWidth = 1024;
-            screenHeight = 768;
+            screenWidth = 1920;
+            screenHeight = 1080;
             Window.AllowUserResizing = true;
         }
         else
@@ -49,6 +48,7 @@ public class FlappyBirdGame : Game
             _graphics.IsFullScreen = true;
         }
 
+        Window.ClientSizeChanged += OnViewportUpdated;
 
         _graphics.PreferredBackBufferWidth = screenWidth;
         _graphics.PreferredBackBufferHeight = screenHeight;
@@ -60,7 +60,7 @@ public class FlappyBirdGame : Game
 
     protected override void Initialize()
     {
-        _graphics.GraphicsDevice.DeviceReset += OnDeviceReset;
+        _graphics.GraphicsDevice.DeviceReset += OnViewportUpdated;
 
         Momo.System.Resources.Initialize(_graphics.GraphicsDevice);
 
@@ -71,12 +71,12 @@ public class FlappyBirdGame : Game
         base.Initialize();
     }
 
-    private void OnDeviceReset(object? sender, EventArgs e)
+    private void OnViewportUpdated(object? sender, EventArgs e)
     {
         // When the graphics device resets (e.g., window resize or entering/exiting
         // fullscreen), update any cached viewport-dependent values in the game world.
-        _levelManager?.OnGraphicsDeviceReset(GraphicsDevice);
-        _userInterface?.OnGraphicsDeviceReset(GraphicsDevice);
+        _levelManager?.OnViewportUpdated();
+        _userInterface?.OnViewportUpdated(GraphicsDevice);
     }
 
 
