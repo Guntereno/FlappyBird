@@ -305,11 +305,11 @@ public class GameWorld : DrawableGameComponent
         var content = Game.Services.GetService<ContentManager>();
 
         _pipeNinePatch = NinePatchExtensions.Create(
-            content.Load<Texture2D>("GreenPipe"),
+            content.Load<Texture2D>("Sprites/GreenPipe"),
             new Rectangle(0, 0, 128, 128),
             new Rectangle(38, 50, 30, 26));
 
-        _cloudsAtlas = content.Load<Texture2DAtlas>("CloudsAtlas");
+        _cloudsAtlas = content.Load<Texture2DAtlas>("Clouds");
         int numClouds = _cloudsAtlas.RegionCount;
         _cloudSprites = new Sprite[numClouds];
         for (int i = 0; i < numClouds; ++i)
@@ -317,7 +317,7 @@ public class GameWorld : DrawableGameComponent
             _cloudSprites[i] = _cloudsAtlas.CreateSprite(i);
         }
 
-        _groundTexture = content.Load<Texture2D>("Ground");
+        _groundTexture = content.Load<Texture2D>("Sprites/Ground");
 
         _music = content.Load<Song>("Audio/Music/GameMusic");
         PlayMusic();

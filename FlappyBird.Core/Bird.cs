@@ -55,7 +55,7 @@ public class Bird
 
     public void LoadContent(ContentManager content)
     {
-        Texture2D texture = content.Load<Texture2D>("FlappingBird");
+        Texture2D texture = content.Load<Texture2D>("Sprites/FlappingBird");
         Texture2DAtlas atlas = Texture2DAtlas.Create("FlappingBird", texture, BIRD_WIDTH, BIRD_HEIGHT, 8, 0, 0);
         SpriteSheet spriteSheet = new SpriteSheet("FlappingBird", atlas);
 

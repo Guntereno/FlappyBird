@@ -14,74 +14,74 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin ../../Content/Audio/Music/GameMusic.mp3
+#begin Audio/Music/GameMusic.mp3
 /importer:Mp3Importer
 /processor:SongProcessor
 /processorParam:Quality=Best
-/build:../../Content/Audio/Music/GameMusic.mp3;Audio/Music/GameMusic.mp3
+/build:Audio/Music/GameMusic.mp3
 
-#begin ../../Content/Audio/SoundEffects/Bell01.wav
+#begin Audio/SoundEffects/Bell01.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../Content/Audio/SoundEffects/Bell01.wav;Audio/SoundEffects/Bell01.wav
+/build:Audio/SoundEffects/Bell01.wav
 
-#begin ../../Content/Audio/SoundEffects/Flap01.wav
+#begin Audio/SoundEffects/Flap01.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../Content/Audio/SoundEffects/Flap01.wav;Audio/SoundEffects/Flap01.wav
+/build:Audio/SoundEffects/Flap01.wav
 
-#begin ../../Content/Audio/SoundEffects/Flap02.wav
+#begin Audio/SoundEffects/Flap02.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../Content/Audio/SoundEffects/Flap02.wav;Audio/SoundEffects/Flap02.wav
+/build:Audio/SoundEffects/Flap02.wav
 
-#begin ../../Content/Audio/SoundEffects/Flap03.wav
+#begin Audio/SoundEffects/Flap03.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../Content/Audio/SoundEffects/Flap03.wav;Audio/SoundEffects/Flap03.wav
+/build:Audio/SoundEffects/Flap03.wav
 
-#begin ../../Content/Audio/SoundEffects/Flap04.wav
+#begin Audio/SoundEffects/Flap04.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../Content/Audio/SoundEffects/Flap04.wav;Audio/SoundEffects/Flap04.wav
+/build:Audio/SoundEffects/Flap04.wav
 
-#begin ../../Content/Audio/SoundEffects/Hit01.wav
+#begin Audio/SoundEffects/Hit01.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../Content/Audio/SoundEffects/Hit01.wav;Audio/SoundEffects/Hit01.wav
+/build:Audio/SoundEffects/Hit01.wav
 
-#begin ../../Content/Audio/SoundEffects/Hit02.wav
+#begin Audio/SoundEffects/Hit02.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../Content/Audio/SoundEffects/Hit02.wav;Audio/SoundEffects/Hit02.wav
+/build:Audio/SoundEffects/Hit02.wav
 
-#begin ../../Content/Audio/SoundEffects/Hit03.wav
+#begin Audio/SoundEffects/Hit03.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../Content/Audio/SoundEffects/Hit03.wav;Audio/SoundEffects/Hit03.wav
+/build:Audio/SoundEffects/Hit03.wav
 
-#begin ../../Content/Audio/SoundEffects/Hit04.wav
+#begin Audio/SoundEffects/Hit04.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:../../Content/Audio/SoundEffects/Hit04.wav;Audio/SoundEffects/Hit04.wav
+/build:Audio/SoundEffects/Hit04.wav
 
-#begin ../../Content/Fonts/Nunito-Black.spritefont
+#begin Fonts/Nunito-Black.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Color
-/build:../../Content/Fonts/Nunito-Black.spritefont;Fonts/Nunito-Black.spritefont
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Nunito-Black.spritefont
 
-#begin ../../Content/Sprites/FlappingBird.tiff
+#begin Sprites/Background.tiff
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -91,36 +91,12 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../Content/Sprites/FlappingBird.tiff;FlappingBird.tiff
+/build:Sprites/Background.tiff
 
-#begin ../../Content/Sprites/GreenPipe.tiff
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../Content/Sprites/GreenPipe.tiff;GreenPipe.tiff
-
-#begin ../../Content/Sprites/Ground.tiff
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../Content/Sprites/Ground.tiff;Ground.tiff
-
-#begin CloudsAtlas.json
+#begin Clouds.json
 /importer:TexturePackerJsonImporter
 /processor:TexturePackerProcessor
-/build:CloudsAtlas.json
+/build:Clouds.json
 
 #begin CloudsTexture.png
 /importer:TextureImporter
@@ -133,4 +109,40 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:CloudsTexture.png
+
+#begin Sprites/FlappingBird.tiff
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/FlappingBird.tiff
+
+#begin Sprites/GreenPipe.tiff
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/GreenPipe.tiff
+
+#begin Sprites/Ground.tiff
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Ground.tiff
 
