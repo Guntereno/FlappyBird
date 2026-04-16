@@ -42,26 +42,6 @@ public class GameWorld : DrawableGameComponent
         public Rectangle BottomPipe;
     }
 
-    private struct Cloud
-    {
-        public float Position = 0.0f;
-        public float HeightNormalised = 0.0f;
-        public int ParalaxLayer = -1;
-        public Sprite? Sprite = null;
-
-        public Cloud()
-        {
-        }
-
-        public Cloud(float position, float heightNormalised, int paralaxLayer, Sprite sprite)
-        {
-            Position = position;
-            HeightNormalised = heightNormalised;
-            ParalaxLayer = paralaxLayer;
-            Sprite = sprite;
-        }
-    }
-
     private Rectangle CameraBounds
     {
         get
@@ -99,14 +79,6 @@ public class GameWorld : DrawableGameComponent
 
     private const float LEVEL_SPEED = 800.0f;
 
-    // Cloud constants
-    private const int CLOUD_COUNT = 12; // Number of clouds
-    private const int CLOUD_LAYER_COUNT = 4; // Number of paralax layers
-    private const float CLOUD_MOVE_SPEED_MAX = 400f; // Cloud movement speed at closest layer
-    private const float CLOUD_MOVE_SPEED_MIN = 200f; // Cloud movement speed at furthest layer
-    private const float CLOUD_HEIGHT_MAX = 1000.0f;
-    private const float CLOUD_HEIGHT_MIN = 200.0f; // Allow some space to avoid them conflicting with the UI
-
 
     private static readonly FName ACTION_CONTINUE = new FName("Continue");
     private static readonly FName ACTION_JUMP = new FName("Jump");
@@ -127,21 +99,21 @@ public class GameWorld : DrawableGameComponent
 
     private NinePatch? _pipeNinePatch = null;
     private Texture2D? _groundTexture = null;
-    private Texture2DAtlas? _cloudsAtlas = null;
-    private Sprite[]? _cloudSprites = null;
 
     private Song? _music = null;
     private SoundEffectInstance? _bellSound = null;
     private SoundEffectPool _hitSounds = new SoundEffectPool();
 
     private List<Pipe> _pipes = new List<Pipe>();
-    private Cloud[] _clouds;
+
 
     private int _pipeCounter = 0;
 
     private int _pipesCrossed = 0;
 
     private Bird _bird;
+
+    private CloudField _clouds = new CloudField();
 
     private bool _isPaused = false;
 
@@ -162,8 +134,6 @@ public class GameWorld : DrawableGameComponent
         _inputManager.Mapper.AddMapping(ACTION_CONTINUE, new InputKey(Keys.Space), new InputKey(true), new InputKey(Buttons.A), InputKey.Touch());
         _inputManager.Mapper.AddMapping(ACTION_JUMP, new InputKey(Keys.Space), new InputKey(true), new InputKey(Buttons.A), InputKey.Touch());
         _inputManager.Mapper.AddMapping(ACTION_PAUSE, new InputKey(Keys.P), new InputKey(Keys.Escape));
-
-        _clouds = new Cloud[CLOUD_COUNT];
 
         ChangeState(State.Intro);
     }
@@ -208,7 +178,7 @@ public class GameWorld : DrawableGameComponent
 
         _bird.Update(gameTime);
 
-        UpdateClouds(gameTime, _random);
+        _clouds.Update(gameTime, _random, CameraBounds);
         UpdatePipes(gameTime);
         UpdateGround(gameTime);
 
@@ -279,7 +249,7 @@ public class GameWorld : DrawableGameComponent
 
         Rectangle cameraBounds = CameraBounds;
 
-        DrawClouds(cameraBounds);
+        _clouds.Draw(_spriteBatch, cameraBounds);
 
         foreach (var pipe in _pipes)
         {
@@ -314,13 +284,6 @@ public class GameWorld : DrawableGameComponent
             new Rectangle(0, 0, 128, 128),
             new Rectangle(38, 50, 30, 26));
 
-        _cloudsAtlas = content.Load<Texture2DAtlas>("Clouds");
-        int numClouds = _cloudsAtlas.RegionCount;
-        _cloudSprites = new Sprite[numClouds];
-        for (int i = 0; i < numClouds; ++i)
-        {
-            _cloudSprites[i] = _cloudsAtlas.CreateSprite(i);
-        }
 
         _groundTexture = content.Load<Texture2D>("Sprites/Ground");
 
@@ -338,7 +301,8 @@ public class GameWorld : DrawableGameComponent
 
         _bird.LoadContent(content);
 
-        InitialiseClouds(_random);
+        _clouds.LoadContent(content);
+        _clouds.Initialise(_random, CameraBounds);
 
         base.LoadContent();
     }
@@ -376,88 +340,6 @@ public class GameWorld : DrawableGameComponent
             _groundScrollOffset -= GROUND_TILE_SIZE;
         }
     }
-
-
-#region Clouds
-
-    private void InitialiseClouds(Random random)
-    {
-        Rectangle cameraBounds = CameraBounds;
-        for(int i=0; i<CLOUD_COUNT; ++i)
-        {
-            float xPosition = cameraBounds.Left + ((float)random.NextDouble() * cameraBounds.Width);
-            SpawnCloud(ref _clouds[i], random, xPosition);
-        }
-    }
-
-    private void UpdateClouds(GameTime gameTime, Random random)
-    {
-        float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        
-        foreach (ref Cloud cloud in _clouds.AsSpan())
-        {
-            float speed = CLOUD_MOVE_SPEED_MIN + ((float)cloud.ParalaxLayer / CLOUD_LAYER_COUNT) * (CLOUD_MOVE_SPEED_MAX - CLOUD_MOVE_SPEED_MIN);
-            cloud.Position -= speed * deltaTime;
-
-            if (cloud.Sprite == null)
-            {
-                throw new Exception("Cloud sprite is null!");
-            }
-
-            int spriteWidth = cloud.Sprite.Size.X;
-            if ((cloud.Position + spriteWidth) < CameraBounds.Left)
-            {
-                float xPosition = CameraBounds.Right + (spriteWidth / 2);
-                SpawnCloud(ref cloud, random, xPosition);
-            }
-        }
-    }
-
-    private void SpawnCloud(ref Cloud cloud, Random random, float xPosition)
-    {
-        if (_cloudSprites == null)
-        {
-            throw new Exception("Cloud sprites aren't loaded!");
-        }
-
-        float heightNormalised = (float)random.NextDouble();
-
-        int randomIndex = random.Next(_cloudSprites.Length);
-        Sprite sprite = _cloudSprites[randomIndex];
-
-        int paralaxLayer = random.Next(CLOUD_LAYER_COUNT);
-        cloud = new Cloud(xPosition, heightNormalised, paralaxLayer, sprite);
-    }
-
-    private void DrawClouds(Rectangle cameraBounds)
-    {
-        for (int i=0; i<CLOUD_LAYER_COUNT; ++i)
-        {
-            foreach (var cloud in _clouds)
-            {
-                if(cloud.ParalaxLayer != i)
-                {
-                    continue;
-                }
-
-                DrawCloud(cameraBounds, cloud);
-            }
-        }
-    }
-
-    private void DrawCloud(Rectangle cameraBounds, Cloud cloud)
-    {
-        if (_cloudSprites == null)
-        {
-            throw new Exception("Cloud sprites have not been loaded!");
-        }
-
-        float screenHeight = CLOUD_HEIGHT_MIN + (cloud.HeightNormalised * (CLOUD_HEIGHT_MAX - CLOUD_HEIGHT_MIN));
-        Vector2 position = new Vector2(cloud.Position, screenHeight);
-        _spriteBatch.Draw(cloud.Sprite, position);
-    }
-
-#endregion
 
 
      private void UpdatePipes(GameTime gameTime)
